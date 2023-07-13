@@ -1,18 +1,21 @@
-package study.springbook;
+package study.springbook.dao;
 
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import study.springbook.factory.DaoFactory;
-import study.springbook.dao.MemberDao;
 import study.springbook.domain.Member;
+import study.springbook.factory.DaoFactory;
 
 import java.sql.SQLException;
 
-public class MemberDaoTest {
+import static org.junit.jupiter.api.Assertions.*;
 
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
+class MemberDaoTest {
 
+    @Test
+    public void addAndGet() throws SQLException, ClassNotFoundException {
         ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+
         MemberDao dao = context.getBean("memberDao", MemberDao.class);
 
         Member member = new Member();
@@ -22,12 +25,9 @@ public class MemberDaoTest {
 
         dao.add(member);
 
-        System.out.println(member.getId() + " successfully registered");
-
         Member member2 = dao.get(member.getId());
-        System.out.println(member2.getName());
-        System.out.println(member2.getPassword());
 
-        System.out.println(member2.getId() + " successfully checked");
+        assertEquals(member2.getName(), member.getName());
+        assertEquals(member2.getPassword(), member.getPassword());
     }
 }
