@@ -8,8 +8,8 @@ public class MemberDao {
 
     private ConnectionMaker connectionMaker;
 
-    public MemberDao() {
-        connectionMaker = new NConnectionMaker();
+    public MemberDao(ConnectionMaker connectionMaker) {
+        this.connectionMaker = connectionMaker;
     }
 
     public void add(Member member) throws ClassNotFoundException, SQLException {
