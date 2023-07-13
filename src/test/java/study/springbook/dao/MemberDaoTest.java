@@ -5,13 +5,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.test.annotation.DirtiesContext;
 import study.springbook.domain.Member;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@DirtiesContext
 class MemberDaoTest {
 
     @Autowired
@@ -25,6 +29,10 @@ class MemberDaoTest {
         member1 = new Member("id1", "name1", "password1");
         member2 = new Member("id2", "name2", "password2");
         member3 = new Member("id3", "name3", "password3");
+
+        DataSource dataSource = new SingleConnectionDataSource(
+                "jdbc:postgresql://localhost:5432/test_db", "postgres", "postgres", true);
+        dao.setDataSource(dataSource);
     }
 
     @Test
