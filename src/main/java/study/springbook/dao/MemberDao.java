@@ -2,19 +2,20 @@ package study.springbook.dao;
 
 import study.springbook.domain.Member;
 
+import javax.sql.DataSource;
 import java.sql.*;
 
 public class MemberDao {
 
-    private ConnectionMaker connectionMaker;
+    private DataSource dataSource;
 
-    public MemberDao(ConnectionMaker connectionMaker) {
-        this.connectionMaker = connectionMaker;
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public void add(Member member) throws ClassNotFoundException, SQLException {
         Class.forName("org.postgresql.Driver");
-        Connection c = connectionMaker.makeConnection();
+        Connection c = dataSource.getConnection();
 
         PreparedStatement ps = c.prepareStatement("insert into member(id, name, password) values (?, ?, ?)");
         ps.setString(1, member.getId());
@@ -29,7 +30,7 @@ public class MemberDao {
 
     public Member get(String id) throws ClassNotFoundException, SQLException {
         Class.forName("org.postgresql.Driver");
-        Connection c = connectionMaker.makeConnection();
+        Connection c = dataSource.getConnection();
 
         PreparedStatement ps = c.prepareStatement("select * from member where id = ?");
         ps.setString(1, id);

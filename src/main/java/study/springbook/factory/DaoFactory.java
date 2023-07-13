@@ -2,25 +2,30 @@ package study.springbook.factory;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import study.springbook.dao.ConnectionMaker;
-import study.springbook.dao.CountingConnectionMaker;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import study.springbook.dao.MemberDao;
-import study.springbook.dao.NConnectionMaker;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class DaoFactory {
 
     @Bean
     public MemberDao memberDao() {
-        return new MemberDao(countingConnectionMaker());
+        MemberDao memberDao = new MemberDao();
+        memberDao.setDataSource(dataSource());
+        return memberDao;
     }
 
     @Bean
-    public ConnectionMaker connectionMaker() {
-        return new NConnectionMaker();
-    }
+    public DataSource dataSource() {
+        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
 
-    @Bean ConnectionMaker countingConnectionMaker() {
-        return new CountingConnectionMaker(connectionMaker());
+        dataSource.setDriverClass(org.postgresql.Driver.class);
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/postgres");
+        dataSource.setUsername("postgres");
+        dataSource.setPassword("postgres");
+
+        return dataSource;
     }
 }
