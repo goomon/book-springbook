@@ -1,5 +1,6 @@
 package study.springbook.dao;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -13,15 +14,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MemberDaoTest {
 
+    private MemberDao dao;
+    private Member member1;
+    private Member member2;
+    private Member member3;
+
+    @BeforeEach
+    public void setUp() {
+        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+        dao = context.getBean("memberDao", MemberDao.class);
+
+        member1 = new Member("id1", "name1", "password1");
+        member2 = new Member("id2", "name2", "password2");
+        member3 = new Member("id3", "name3", "password3");
+    }
+
     @Test
     public void addAndGet() throws SQLException, ClassNotFoundException {
-        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-
-        MemberDao dao = context.getBean("memberDao", MemberDao.class);
-        Member member1 = new Member("id1", "name1", "password1");
-        Member member2 = new Member("id2", "name2", "password2");
-        Member member3 = new Member("id3", "name3", "password3");
-
         dao.deleteAll();
         assertEquals(dao.getCount(), 0);
 
@@ -45,9 +54,6 @@ class MemberDaoTest {
 
     @Test
     public void getUserFailure() throws SQLException {
-        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-
-        MemberDao dao = context.getBean("memberDao", MemberDao.class);
         dao.deleteAll();
         assertEquals(dao.getCount(), 0);
 
