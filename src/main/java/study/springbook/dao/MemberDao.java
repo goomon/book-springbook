@@ -6,9 +6,15 @@ import java.sql.*;
 
 public class MemberDao {
 
+    private ConnectionMaker connectionMaker;
+
+    public MemberDao() {
+        connectionMaker = new NConnectionMaker();
+    }
+
     public void add(Member member) throws ClassNotFoundException, SQLException {
         Class.forName("org.postgresql.Driver");
-        Connection c = getConnection();
+        Connection c = connectionMaker.makeConnection();
 
         PreparedStatement ps = c.prepareStatement("insert into member(id, name, password) values (?, ?, ?)");
         ps.setString(1, member.getId());
@@ -23,7 +29,7 @@ public class MemberDao {
 
     public Member get(String id) throws ClassNotFoundException, SQLException {
         Class.forName("org.postgresql.Driver");
-        Connection c = getConnection();
+        Connection c = connectionMaker.makeConnection();
 
         PreparedStatement ps = c.prepareStatement("select * from member where id = ?");
         ps.setString(1, id);
@@ -40,12 +46,5 @@ public class MemberDao {
         c.close();
 
         return member;
-    }
-
-    private Connection getConnection() throws ClassNotFoundException, SQLException {
-        Class.forName("org.postgresql.Driver");
-        Connection c = DriverManager.getConnection(
-                "jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
-        return c;
     }
 }
