@@ -17,17 +17,28 @@ class MemberDaoTest {
         ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
 
         MemberDao dao = context.getBean("memberDao", MemberDao.class);
+        Member member1 = new Member("id1", "name1", "password1");
+        Member member2 = new Member("id2", "name2", "password2");
+        Member member3 = new Member("id3", "name3", "password3");
 
-        Member member = new Member();
-        member.setId("id");
-        member.setName("jaegoo");
-        member.setPassword("password");
+        dao.deleteAll();
+        assertEquals(dao.getCount(), 0);
 
-        dao.add(member);
+        dao.add(member1);
+        assertEquals(dao.getCount(), 1);
 
-        Member member2 = dao.get(member.getId());
+        dao.add(member2);
+        assertEquals(dao.getCount(), 2);
 
-        assertEquals(member2.getName(), member.getName());
-        assertEquals(member2.getPassword(), member.getPassword());
+        dao.add(member3);
+        assertEquals(dao.getCount(), 3);
+
+        Member data1 = dao.get(member1.getId());
+        assertEquals(data1.getName(), member1.getName());
+        assertEquals(data1.getPassword(), member1.getPassword());
+
+        Member data2 = dao.get(member2.getId());
+        assertEquals(data2.getName(), member2.getName());
+        assertEquals(data2.getPassword(), member2.getPassword());
     }
 }
