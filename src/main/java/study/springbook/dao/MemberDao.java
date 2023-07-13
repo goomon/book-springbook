@@ -1,5 +1,6 @@
 package study.springbook.dao;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import study.springbook.domain.Member;
 
 import javax.sql.DataSource;
@@ -36,15 +37,20 @@ public class MemberDao {
         ps.setString(1, id);
 
         ResultSet rs = ps.executeQuery();
-        rs.next();
-        Member member = new Member();
-        member.setId(rs.getString("id"));
-        member.setName(rs.getString("name"));
-        member.setPassword(rs.getString("password"));
+
+        Member member = null;
+        if (rs.next()) {
+            member = new Member();
+            member.setId(rs.getString("id"));
+            member.setName(rs.getString("name"));
+            member.setPassword(rs.getString("password"));
+        }
 
         rs.close();
         ps.close();
         c.close();
+
+        if (member == null) throw new EmptyResultDataAccessException(1);
 
         return member;
     }

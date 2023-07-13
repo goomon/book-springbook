@@ -3,6 +3,7 @@ package study.springbook.dao;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 import study.springbook.domain.Member;
 import study.springbook.factory.DaoFactory;
 
@@ -40,5 +41,18 @@ class MemberDaoTest {
         Member data2 = dao.get(member2.getId());
         assertEquals(data2.getName(), member2.getName());
         assertEquals(data2.getPassword(), member2.getPassword());
+    }
+
+    @Test
+    public void getUserFailure() throws SQLException {
+        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+
+        MemberDao dao = context.getBean("memberDao", MemberDao.class);
+        dao.deleteAll();
+        assertEquals(dao.getCount(), 0);
+
+        assertThrows(EmptyResultDataAccessException.class, () -> {
+            dao.get("unknown");
+        });
     }
 }
