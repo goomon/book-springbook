@@ -1,7 +1,7 @@
 package study.springbook;
 
+import study.springbook.factory.DaoFactory;
 import study.springbook.dao.MemberDao;
-import study.springbook.dao.NConnectionMaker;
 import study.springbook.domain.Member;
 
 import java.sql.SQLException;
@@ -9,9 +9,7 @@ import java.sql.SQLException;
 public class MemberDaoTest {
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        NConnectionMaker connectionMaker = new NConnectionMaker();
-
-        MemberDao dao = new MemberDao(connectionMaker);
+        MemberDao dao = new DaoFactory().memberDao();
 
         Member member = new Member();
         member.setId("id");
