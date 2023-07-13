@@ -2,18 +2,19 @@ package study.springbook.dao;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import study.springbook.domain.Member;
-import study.springbook.factory.DaoFactory;
 
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 class MemberDaoTest {
 
+    @Autowired
     private MemberDao dao;
     private Member member1;
     private Member member2;
@@ -21,9 +22,6 @@ class MemberDaoTest {
 
     @BeforeEach
     public void setUp() {
-        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-        dao = context.getBean("memberDao", MemberDao.class);
-
         member1 = new Member("id1", "name1", "password1");
         member2 = new Member("id2", "name2", "password2");
         member3 = new Member("id3", "name3", "password3");
