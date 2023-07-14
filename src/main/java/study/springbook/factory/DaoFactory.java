@@ -14,7 +14,7 @@ public class DaoFactory {
     @Bean
     public MemberDao memberDao() {
         MemberDao memberDao = new MemberDao();
-        memberDao.setJdbcContext(jdbcContext());
+        memberDao.setDataSource(dataSource());
         return memberDao;
     }
 
