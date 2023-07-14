@@ -2,7 +2,6 @@ package study.springbook.dao;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import study.springbook.domain.Member;
-import study.springbook.statement.DeleteAllStatement;
 import study.springbook.statement.StatementStrategy;
 
 import javax.sql.DataSource;
@@ -17,21 +16,15 @@ public class MemberDao {
     }
 
     public void add(Member member) throws SQLException {
-
-        class AddStatement implements StatementStrategy {
-
-            @Override
-            public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
-                PreparedStatement ps = c.prepareStatement("insert into member(id, name, password) values (?, ?, ?)");
-                ps.setString(1, member.getId());
-                ps.setString(2, member.getName());
-                ps.setString(3, member.getPassword());
-                return ps;
-            }
-        }
-
-        StatementStrategy st = new AddStatement();
-        jdbcContextWithStatementStrategy(st);
+        jdbcContextWithStatementStrategy(
+                c -> {
+                    PreparedStatement ps = c.prepareStatement("insert into member(id, name, password) values (?, ?, ?)");
+                    ps.setString(1, member.getId());
+                    ps.setString(2, member.getName());
+                    ps.setString(3, member.getPassword());
+                    return ps;
+                }
+        );
     }
 
     public Member get(String id) throws ClassNotFoundException, SQLException {
@@ -61,8 +54,12 @@ public class MemberDao {
     }
 
     public void deleteAll() throws SQLException {
-        StatementStrategy st = new DeleteAllStatement();
-        jdbcContextWithStatementStrategy(st);
+        jdbcContextWithStatementStrategy(
+                c -> {
+                    PreparedStatement ps = c.prepareStatement("delete from member");
+                    return ps;
+                }
+        );
     }
 
     public int getCount() throws SQLException {
