@@ -2,6 +2,9 @@ package study.springbook.dao;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import study.springbook.domain.Member;
+import study.springbook.statement.AddStatement;
+import study.springbook.statement.DeleteAllStatement;
+import study.springbook.statement.StatementStrategy;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -14,19 +17,9 @@ public class MemberDao {
         this.dataSource = dataSource;
     }
 
-    public void add(Member member) throws ClassNotFoundException, SQLException {
-        Class.forName("org.postgresql.Driver");
-        Connection c = dataSource.getConnection();
-
-        PreparedStatement ps = c.prepareStatement("insert into member(id, name, password) values (?, ?, ?)");
-        ps.setString(1, member.getId());
-        ps.setString(2, member.getName());
-        ps.setString(3, member.getPassword());
-
-        ps.executeUpdate();
-
-        ps.close();
-        c.close();
+    public void add(Member member) throws SQLException {
+        StatementStrategy st = new AddStatement(member);
+        jdbcContextWithStatementStrategy(st);
     }
 
     public Member get(String id) throws ClassNotFoundException, SQLException {
@@ -56,29 +49,8 @@ public class MemberDao {
     }
 
     public void deleteAll() throws SQLException {
-        Connection c = null;
-        PreparedStatement ps = null;
-
-        try {
-            c = dataSource.getConnection();
-            ps = c.prepareStatement("delete from member");
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
+        StatementStrategy st = new DeleteAllStatement();
+        jdbcContextWithStatementStrategy(st);
     }
 
     public int getCount() throws SQLException {
@@ -102,6 +74,33 @@ public class MemberDao {
                 } catch (SQLException e) {
                 }
             }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                }
+            }
+            if (c != null) {
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
+    }
+
+    public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        try {
+            c = dataSource.getConnection();
+
+            ps = stmt.makePreparedStatement(c);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
             if (ps != null) {
                 try {
                     ps.close();
