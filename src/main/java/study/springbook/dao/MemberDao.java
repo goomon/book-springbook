@@ -1,6 +1,7 @@
 package study.springbook.dao;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import study.springbook.domain.Member;
 
 import javax.sql.DataSource;
@@ -8,11 +9,17 @@ import java.util.List;
 
 public class MemberDao {
 
-    private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
 
+    private RowMapper<Member> memberMapper = (rs, rowNum) -> {
+        Member member = new Member();
+        member.setId(rs.getString("id"));
+        member.setName(rs.getString("name"));
+        member.setPassword(rs.getString("password"));
+        return member;
+    };
+
     public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
@@ -23,25 +30,11 @@ public class MemberDao {
 
     public Member get(String id) {
         return jdbcTemplate.queryForObject("select * from member where id = ?",
-                new Object[]{id},
-                (rs, rowNum) -> {
-                    Member member = new Member();
-                    member.setId(rs.getString("id"));
-                    member.setName(rs.getString("name"));
-                    member.setPassword(rs.getString("password"));
-                    return member;
-                });
+                new Object[]{id}, memberMapper);
     }
 
     public List<Member> getAll() {
-        return jdbcTemplate.query("select * from member order by id",
-                (rs, rowNum) -> {
-                    Member member = new Member();
-                    member.setId(rs.getString("id"));
-                    member.setName(rs.getString("name"));
-                    member.setPassword(rs.getString("password"));
-                    return member;
-                });
+        return jdbcTemplate.query("select * from member order by id", memberMapper);
     }
 
     public void deleteAll() {
