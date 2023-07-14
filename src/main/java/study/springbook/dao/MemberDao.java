@@ -4,6 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import study.springbook.domain.Member;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 public class MemberDao {
 
@@ -23,6 +24,17 @@ public class MemberDao {
     public Member get(String id) {
         return jdbcTemplate.queryForObject("select * from member where id = ?",
                 new Object[]{id},
+                (rs, rowNum) -> {
+                    Member member = new Member();
+                    member.setId(rs.getString("id"));
+                    member.setName(rs.getString("name"));
+                    member.setPassword(rs.getString("password"));
+                    return member;
+                });
+    }
+
+    public List<Member> getAll() {
+        return jdbcTemplate.query("select * from member order by id",
                 (rs, rowNum) -> {
                     Member member = new Member();
                     member.setId(rs.getString("id"));
