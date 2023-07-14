@@ -14,14 +14,11 @@ public class MemberDao {
     }
 
     public void add(Member member) throws SQLException {
-        jdbcContext.workWithStatementStrategy(
-                c -> {
-                    PreparedStatement ps = c.prepareStatement("insert into member(id, name, password) values (?, ?, ?)");
-                    ps.setString(1, member.getId());
-                    ps.setString(2, member.getName());
-                    ps.setString(3, member.getPassword());
-                    return ps;
-                }
+        jdbcContext.executeSql(
+                "insert into member(id, name, password) values (?, ?, ?)",
+                member.getId(),
+                member.getName(),
+                member.getPassword()
         );
     }
 
@@ -52,12 +49,7 @@ public class MemberDao {
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContext.workWithStatementStrategy(
-                c -> {
-                    PreparedStatement ps = c.prepareStatement("delete from member");
-                    return ps;
-                }
-        );
+        jdbcContext.executeSql("delete from member");
     }
 
     public int getCount() throws SQLException {

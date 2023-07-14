@@ -45,4 +45,16 @@ public class JdbcContext {
             }
         }
     }
+
+    public void executeSql(final String query, final String... varargs) throws SQLException {
+        workWithStatementStrategy(
+                c -> {
+                    PreparedStatement ps = c.prepareStatement(query);
+                    for (int i = 0; i < varargs.length; i++) {
+                        ps.setString(i + 1, varargs[i]);
+                    }
+                    return ps;
+                }
+        );
+    }
 }
