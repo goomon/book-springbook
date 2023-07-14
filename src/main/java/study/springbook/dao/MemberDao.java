@@ -2,21 +2,19 @@ package study.springbook.dao;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import study.springbook.domain.Member;
-import study.springbook.statement.StatementStrategy;
 
-import javax.sql.DataSource;
 import java.sql.*;
 
 public class MemberDao {
 
-    private DataSource dataSource;
+    private JdbcContext jdbcContext;
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public void setJdbcContext(JdbcContext jdbcContext) {
+        this.jdbcContext = jdbcContext;
     }
 
     public void add(Member member) throws SQLException {
-        jdbcContextWithStatementStrategy(
+        jdbcContext.workWithStatementStrategy(
                 c -> {
                     PreparedStatement ps = c.prepareStatement("insert into member(id, name, password) values (?, ?, ?)");
                     ps.setString(1, member.getId());
@@ -29,7 +27,7 @@ public class MemberDao {
 
     public Member get(String id) throws ClassNotFoundException, SQLException {
         Class.forName("org.postgresql.Driver");
-        Connection c = dataSource.getConnection();
+        Connection c = jdbcContext.getDataSource().getConnection();
 
         PreparedStatement ps = c.prepareStatement("select * from member where id = ?");
         ps.setString(1, id);
@@ -54,7 +52,7 @@ public class MemberDao {
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContextWithStatementStrategy(
+        jdbcContext.workWithStatementStrategy(
                 c -> {
                     PreparedStatement ps = c.prepareStatement("delete from member");
                     return ps;
@@ -68,7 +66,7 @@ public class MemberDao {
         ResultSet rs = null;
 
         try {
-            c = dataSource.getConnection();
+            c = jdbcContext.getDataSource().getConnection();
             ps = c.prepareStatement("select count(*) from member");
 
             rs = ps.executeQuery();
@@ -83,33 +81,6 @@ public class MemberDao {
                 } catch (SQLException e) {
                 }
             }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
-
-    public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
-        Connection c = null;
-        PreparedStatement ps = null;
-
-        try {
-            c = dataSource.getConnection();
-
-            ps = stmt.makePreparedStatement(c);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
-        } finally {
             if (ps != null) {
                 try {
                     ps.close();
