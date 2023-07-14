@@ -2,7 +2,6 @@ package study.springbook.dao;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import study.springbook.domain.Member;
-import study.springbook.statement.AddStatement;
 import study.springbook.statement.DeleteAllStatement;
 import study.springbook.statement.StatementStrategy;
 
@@ -18,7 +17,20 @@ public class MemberDao {
     }
 
     public void add(Member member) throws SQLException {
-        StatementStrategy st = new AddStatement(member);
+
+        class AddStatement implements StatementStrategy {
+
+            @Override
+            public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+                PreparedStatement ps = c.prepareStatement("insert into member(id, name, password) values (?, ?, ?)");
+                ps.setString(1, member.getId());
+                ps.setString(2, member.getName());
+                ps.setString(3, member.getPassword());
+                return ps;
+            }
+        }
+
+        StatementStrategy st = new AddStatement();
         jdbcContextWithStatementStrategy(st);
     }
 
