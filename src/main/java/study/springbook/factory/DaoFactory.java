@@ -6,6 +6,8 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import study.springbook.dao.JdbcContext;
 import study.springbook.dao.MemberDao;
 import study.springbook.dao.MemberDaoJdbc;
+import study.springbook.service.MemberLevelUpgradePolicy;
+import study.springbook.service.MemberLevelUpgradePolicyImpl;
 import study.springbook.service.MemberService;
 
 import javax.sql.DataSource;
@@ -17,6 +19,7 @@ public class DaoFactory {
     public MemberService memberService() {
         MemberService memberService = new MemberService();
         memberService.setMemberDao(memberDao());
+        memberService.setMemberLevelUpgradePolicy(memberLevelUpgradePolicy());
         return memberService;
     }
 
@@ -43,5 +46,11 @@ public class DaoFactory {
         dataSource.setPassword("postgres");
 
         return dataSource;
+    }
+
+    @Bean
+    public MemberLevelUpgradePolicy memberLevelUpgradePolicy() {
+        MemberLevelUpgradePolicy memberLevelUpgradePolicy = new MemberLevelUpgradePolicyImpl(memberDao());
+        return memberLevelUpgradePolicy;
     }
 }

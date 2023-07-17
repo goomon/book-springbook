@@ -9,12 +9,17 @@ import java.util.List;
 public class MemberService {
 
     private MemberDao memberDao;
+    private MemberLevelUpgradePolicy memberLevelUpgradePolicy;
 
     public static final int MIN_LOGIN_FOR_SILVER = 30;
     public static final int MIN_RECOMMEND_FOR_GOLD = 50;
 
     public void setMemberDao(MemberDao memberDao) {
         this.memberDao = memberDao;
+    }
+
+    public void setMemberLevelUpgradePolicy(MemberLevelUpgradePolicy memberLevelUpgradePolicy) {
+        this.memberLevelUpgradePolicy = memberLevelUpgradePolicy;
     }
 
     public void add(Member member) {
@@ -27,24 +32,9 @@ public class MemberService {
     public void upgradeLevels() {
         List<Member> members = memberDao.getAll();
         for (Member member : members) {
-            if (canUpgradeLevel(member)) {
-                upgradeLevel(member);
+            if (memberLevelUpgradePolicy.canUpgradeLevel(member)) {
+                memberLevelUpgradePolicy.upgradeLevel(member);
             }
         }
-    }
-
-    private void upgradeLevel(Member member) {
-        member.upgradeLevel();
-        memberDao.update(member);
-    }
-
-    private boolean canUpgradeLevel(Member member) {
-        Level level = member.getLevel();
-        return switch (level) {
-            case BASIC -> member.getLogin() >= MIN_LOGIN_FOR_SILVER;
-            case SILVER -> member.getRecommend() >= MIN_RECOMMEND_FOR_GOLD;
-            case GOLD -> false;
-            default -> throw new IllegalArgumentException("Unknown Level: " + level);
-        };
     }
 }
