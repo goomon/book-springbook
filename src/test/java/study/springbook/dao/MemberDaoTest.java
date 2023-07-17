@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import study.springbook.domain.Level;
 import study.springbook.domain.Member;
 import study.springbook.exception.DuplicateMemberIdException;
 import study.springbook.factory.TestDaoFactory;
@@ -28,9 +29,9 @@ class MemberDaoTest {
 
     @BeforeEach
     public void setUp() {
-        member1 = new Member("id1", "name1", "password1");
-        member2 = new Member("id2", "name2", "password2");
-        member3 = new Member("id3", "name3", "password3");
+        member1 = new Member("id1", "name1", "password1", Level.BASIC, 1, 0);
+        member2 = new Member("id2", "name2", "password2", Level.SILVER, 55, 10);
+        member3 = new Member("id3", "name3", "password3", Level.GOLD, 100,40);
     }
 
     @Test
@@ -103,9 +104,33 @@ class MemberDaoTest {
         });
     }
 
+    @Test
+    public void update() {
+        dao.deleteAll();
+
+        dao.add(member1);
+        dao.add(member2);
+
+        member1.setName("member_1");
+        member1.setPassword("password_1");
+        member1.setLevel(Level.GOLD);
+        member1.setLogin(1000);
+        member1.setRecommend(999);
+
+        dao.update(member1);
+
+        Member member1Update = dao.get(member1.getId());
+        checkSameMember(member1, member1Update);
+        Member member2Same = dao.get(member2.getId());
+        checkSameMember(member2, member2Same);
+    }
+
     private void checkSameMember(Member member1, Member member2) {
         assertEquals(member1.getId(), member2.getId());
         assertEquals(member1.getName(), member2.getName());
         assertEquals(member1.getPassword(), member2.getPassword());
+        assertEquals(member1.getLevel(), member2.getLevel());
+        assertEquals(member1.getLogin(), member2.getLogin());
+        assertEquals(member1.getRecommend(), member2.getRecommend());
     }
 }

@@ -59,4 +59,11 @@ public class MemberDaoJdbc implements MemberDao {
     public int getCount() {
         return jdbcTemplate.queryForObject("select count(*) from member", Integer.class);
     }
+
+    @Override
+    public void update(Member member) {
+        jdbcTemplate.update(
+                "update member set name = ?, password = ?, level = ?, login = ?, recommend = ? where id = ?",
+                member.getName(), member.getPassword(), member.getLevel().intValue(), member.getLogin(), member.getRecommend(), member.getId());
+    }
 }

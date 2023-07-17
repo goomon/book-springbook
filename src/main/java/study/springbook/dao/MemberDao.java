@@ -15,4 +15,6 @@ public interface MemberDao {
     void deleteAll();
 
     int getCount();
+
+    void update(Member member);
 }
