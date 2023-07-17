@@ -10,6 +10,9 @@ public class MemberService {
 
     private MemberDao memberDao;
 
+    public static final int MIN_LOGIN_FOR_SILVER = 30;
+    public static final int MIN_RECOMMEND_FOR_GOLD = 50;
+
     public void setMemberDao(MemberDao memberDao) {
         this.memberDao = memberDao;
     }
@@ -38,8 +41,8 @@ public class MemberService {
     private boolean canUpgradeLevel(Member member) {
         Level level = member.getLevel();
         return switch (level) {
-            case BASIC -> member.getLogin() >= 50;
-            case SILVER -> member.getRecommend() >= 30;
+            case BASIC -> member.getLogin() >= MIN_LOGIN_FOR_SILVER;
+            case SILVER -> member.getRecommend() >= MIN_RECOMMEND_FOR_GOLD;
             case GOLD -> false;
             default -> throw new IllegalArgumentException("Unknown Level: " + level);
         };

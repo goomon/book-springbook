@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static study.springbook.service.MemberService.*;
 
 @SpringBootTest
 @ContextConfiguration(classes = TestDaoFactory.class, loader = AnnotationConfigContextLoader.class)
@@ -29,11 +30,11 @@ class MemberServiceTest {
     @BeforeEach
     public void setUp() {
         members = Arrays.asList(
-                new Member("id1", "member1", "password1", Level.BASIC, 49, 0),
-                new Member("id2", "member2", "password2", Level.BASIC, 50, 0),
-                new Member("id3", "member3", "password3", Level.SILVER, 60, 29),
-                new Member("id4", "member4", "password4", Level.SILVER, 60, 30),
-                new Member("id5", "member5", "password5", Level.GOLD, 100, 100)
+                new Member("id1", "member1", "password1", Level.BASIC, MIN_LOGIN_FOR_SILVER - 1, 0),
+                new Member("id2", "member2", "password2", Level.BASIC, MIN_LOGIN_FOR_SILVER, 0),
+                new Member("id3", "member3", "password3", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD - 1),
+                new Member("id4", "member4", "password4", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD),
+                new Member("id5", "member5", "password5", Level.GOLD, 100, Integer.MAX_VALUE)
         );
     }
 
