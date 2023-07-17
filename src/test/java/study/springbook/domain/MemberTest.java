@@ -21,7 +21,7 @@ class MemberTest {
             if (level.nextLevel() != null) {
                 member.setLevel(level);
                 member.upgradeLevel();
-                assertEquals(member.getLevel(), level.nextLevel());
+                assertEquals(level.nextLevel(), member.getLevel());
             }
         }
     }

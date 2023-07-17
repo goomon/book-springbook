@@ -39,22 +39,22 @@ class MemberDaoTest {
         dao.deleteAll();
 
         List<Member> members0 = dao.getAll();
-        assertEquals(members0.size(), 0);
+        assertEquals(0, members0.size());
 
         dao.add(member1);
         List<Member> members1 = dao.getAll();
-        assertEquals(members1.size(), 1);
+        assertEquals(1, members1.size());
         checkSameMember(member1, members1.get(0));
 
         dao.add(member2);
         List<Member> members2 = dao.getAll();
-        assertEquals(members2.size(), 2);
+        assertEquals(2, members2.size());
         checkSameMember(member1, members2.get(0));
         checkSameMember(member2, members2.get(1));
 
         dao.add(member3);
         List<Member> members3 = dao.getAll();
-        assertEquals(members3.size(), 3);
+        assertEquals(3, members3.size());
         checkSameMember(member1, members3.get(0));
         checkSameMember(member2, members3.get(1));
         checkSameMember(member3, members3.get(2));
@@ -63,30 +63,30 @@ class MemberDaoTest {
     @Test
     public void addAndGet() throws SQLException, ClassNotFoundException {
         dao.deleteAll();
-        assertEquals(dao.getCount(), 0);
+        assertEquals(0, dao.getCount());
 
         dao.add(member1);
-        assertEquals(dao.getCount(), 1);
+        assertEquals(1, dao.getCount());
 
         dao.add(member2);
-        assertEquals(dao.getCount(), 2);
+        assertEquals(2, dao.getCount());
 
         dao.add(member3);
-        assertEquals(dao.getCount(), 3);
+        assertEquals(3, dao.getCount());
 
         Member data1 = dao.get(member1.getId());
-        assertEquals(data1.getName(), member1.getName());
-        assertEquals(data1.getPassword(), member1.getPassword());
+        assertEquals(member1.getName(), data1.getName());
+        assertEquals(member1.getPassword(), data1.getPassword());
 
         Member data2 = dao.get(member2.getId());
-        assertEquals(data2.getName(), member2.getName());
-        assertEquals(data2.getPassword(), member2.getPassword());
+        assertEquals(member2.getName(), data2.getName());
+        assertEquals(member2.getPassword(), data2.getPassword());
     }
 
     @Test
     public void getUserFailure() {
         dao.deleteAll();
-        assertEquals(dao.getCount(), 0);
+        assertEquals(0, dao.getCount());
 
         assertThrows(EmptyResultDataAccessException.class, () -> {
             dao.get("unknown");
@@ -96,7 +96,7 @@ class MemberDaoTest {
     @Test
     public void duplicateKey() {
         dao.deleteAll();
-        assertEquals(dao.getCount(), 0);
+        assertEquals(0, dao.getCount());
 
         dao.add(member1);
         assertThrows(DuplicateMemberIdException.class, () -> {
@@ -126,11 +126,11 @@ class MemberDaoTest {
     }
 
     private void checkSameMember(Member member1, Member member2) {
-        assertEquals(member1.getId(), member2.getId());
-        assertEquals(member1.getName(), member2.getName());
-        assertEquals(member1.getPassword(), member2.getPassword());
-        assertEquals(member1.getLevel(), member2.getLevel());
-        assertEquals(member1.getLogin(), member2.getLogin());
-        assertEquals(member1.getRecommend(), member2.getRecommend());
+        assertEquals(member2.getId(), member1.getId());
+        assertEquals(member2.getName(), member1.getName());
+        assertEquals(member2.getPassword(), member1.getPassword());
+        assertEquals(member2.getLevel(), member1.getLevel());
+        assertEquals(member2.getLogin(), member1.getLogin());
+        assertEquals(member2.getRecommend(), member1.getRecommend());
     }
 }

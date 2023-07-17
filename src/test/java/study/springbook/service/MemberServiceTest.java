@@ -51,8 +51,8 @@ class MemberServiceTest {
         Member memberWithLevelRead = memberDao.get(memberWithLevel.getId());
         Member memberWithoutLevelRead = memberDao.get(memberWithoutLevel.getId());
 
-        assertEquals(memberWithLevelRead.getLevel(), memberWithLevel.getLevel());
-        assertEquals(memberWithoutLevelRead.getLevel(), Level.BASIC);
+        assertEquals(memberWithLevel.getLevel(), memberWithLevelRead.getLevel());
+        assertEquals(Level.BASIC, memberWithoutLevelRead.getLevel());
     }
 
     @Test
@@ -73,6 +73,6 @@ class MemberServiceTest {
 
     private void checkLevel(Member member, Level expected) {
         Member memberUpdate = memberDao.get(member.getId());
-        assertEquals(memberUpdate.getLevel(), expected);
+        assertEquals(expected, memberUpdate.getLevel());
     }
 }
