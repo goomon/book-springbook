@@ -7,6 +7,7 @@ public class Member {
     private Level level;
     private int login;
     private int recommend;
+    private String email;
 
     public Member() {
 
@@ -19,13 +20,6 @@ public class Member {
         this.level = level;
         this.login = login;
         this.recommend = recommend;
-    }
-
-    public Member(String id, String name, String password, Level level) {
-        this.id = id;
-        this.name = name;
-        this.password = password;
-        this.level = level;
     }
 
     public String getId() {
@@ -52,6 +46,10 @@ public class Member {
         return recommend;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -74,6 +72,10 @@ public class Member {
 
     public void setRecommend(int recommend) {
         this.recommend = recommend;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void upgradeLevel() {
