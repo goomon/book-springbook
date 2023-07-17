@@ -10,7 +10,8 @@ import study.springbook.dao.JdbcContext;
 import study.springbook.dao.MemberDao;
 import study.springbook.dao.MemberDaoJdbc;
 import study.springbook.service.DummyMailSender;
-import study.springbook.service.MemberService;
+import study.springbook.service.MemberServiceImpl;
+import study.springbook.service.MemberServiceTx;
 
 import javax.sql.DataSource;
 
@@ -18,12 +19,19 @@ import javax.sql.DataSource;
 public class TestDaoFactory {
 
     @Bean
-    public MemberService memberService() {
-        MemberService memberService = new MemberService();
-        memberService.setMemberDao(memberDao());
-        memberService.setTransactionManager(transactionManager());
-        memberService.setMailSender(mailSender());
-        return memberService;
+    public MemberServiceTx memberService() {
+        MemberServiceTx memberServiceTx = new MemberServiceTx();
+        memberServiceTx.setMemberService(memberServiceImpl());
+        memberServiceTx.setTransactionManager(transactionManager());
+        return memberServiceTx;
+    }
+
+    @Bean
+    public MemberServiceImpl memberServiceImpl() {
+        MemberServiceImpl memberServiceImpl = new MemberServiceImpl();
+        memberServiceImpl.setMemberDao(memberDao());
+        memberServiceImpl.setMailSender(mailSender());
+        return memberServiceImpl;
     }
 
     @Bean

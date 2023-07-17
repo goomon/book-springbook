@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static study.springbook.service.MemberService.*;
+import static study.springbook.service.MemberServiceImpl.*;
 
 @SpringBootTest
 @ContextConfiguration(classes = TestDaoFactory.class, loader = AnnotationConfigContextLoader.class)
@@ -31,6 +31,8 @@ class MemberServiceTest {
     private MemberDao memberDao;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private MemberServiceImpl memberServiceImpl;
     @Autowired
     private PlatformTransactionManager transactionManager;
     @Autowired
@@ -75,7 +77,7 @@ class MemberServiceTest {
         }
 
         MockMailSender mockMailSender = new MockMailSender();
-        memberService.setMailSender(mockMailSender);
+        memberServiceImpl.setMailSender(mockMailSender);
 
         memberService.upgradeLevels();
 
@@ -94,10 +96,13 @@ class MemberServiceTest {
     @Test
     @DirtiesContext
     public void upgradeAllOrNothing() {
-        MemberService testMemberService = new TestMemberService(members.get(3).getId());
+        MemberServiceImpl testMemberService = new TestMemberService(members.get(3).getId());
         testMemberService.setMemberDao(memberDao);
         testMemberService.setMailSender(mailSender);
-        testMemberService.setTransactionManager(transactionManager);
+
+        MemberServiceTx memberServiceTx = new MemberServiceTx();
+        memberServiceTx.setTransactionManager(transactionManager);
+        memberServiceTx.setMemberService(testMemberService);
 
         memberDao.deleteAll();
         for (Member member : members) {
@@ -105,7 +110,7 @@ class MemberServiceTest {
         }
 
         try {
-            testMemberService.upgradeLevels();
+            memberServiceTx.upgradeLevels();
             fail("TestMemberServiceException expected");
         } catch (TestMemberServiceException e) {
 
@@ -123,7 +128,7 @@ class MemberServiceTest {
         }
     }
 
-    static class TestMemberService extends MemberService {
+    static class TestMemberService extends MemberServiceImpl {
         private String id;
 
         public TestMemberService(String id) {

@@ -8,7 +8,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import study.springbook.dao.JdbcContext;
 import study.springbook.dao.MemberDao;
 import study.springbook.dao.MemberDaoJdbc;
-import study.springbook.service.MemberService;
+import study.springbook.service.MemberServiceImpl;
+import study.springbook.service.MemberServiceTx;
 
 import javax.sql.DataSource;
 
@@ -16,11 +17,18 @@ import javax.sql.DataSource;
 public class DaoFactory {
 
     @Bean
-    public MemberService memberService() {
-        MemberService memberService = new MemberService();
-        memberService.setMemberDao(memberDao());
-        memberService.setTransactionManager(transactionManager());
-        return memberService;
+    public MemberServiceTx memberService() {
+        MemberServiceTx memberServiceTx = new MemberServiceTx();
+        memberServiceTx.setMemberService(memberServiceImpl());
+        memberServiceTx.setTransactionManager(transactionManager());
+        return memberServiceTx;
+    }
+
+    @Bean
+    public MemberServiceImpl memberServiceImpl() {
+        MemberServiceImpl memberServiceImpl = new MemberServiceImpl();
+        memberServiceImpl.setMemberDao(memberDao());
+        return memberServiceImpl;
     }
 
     @Bean
