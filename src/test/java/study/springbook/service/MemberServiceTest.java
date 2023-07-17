@@ -64,15 +64,19 @@ class MemberServiceTest {
 
         memberService.upgradeLevels();
 
-        checkLevel(members.get(0), Level.BASIC);
-        checkLevel(members.get(1), Level.SILVER);
-        checkLevel(members.get(2), Level.SILVER);
-        checkLevel(members.get(3), Level.GOLD);
-        checkLevel(members.get(4), Level.GOLD);
+        checkLevelUpgrade(members.get(0), false);
+        checkLevelUpgrade(members.get(1), true);
+        checkLevelUpgrade(members.get(2), false);
+        checkLevelUpgrade(members.get(3), true);
+        checkLevelUpgrade(members.get(4), false);
     }
 
-    private void checkLevel(Member member, Level expected) {
+    private void checkLevelUpgrade(Member member, boolean upgraded) {
         Member memberUpdate = memberDao.get(member.getId());
-        assertEquals(expected, memberUpdate.getLevel());
+        if (upgraded) {
+            assertEquals(member.getLevel().nextLevel(), memberUpdate.getLevel());
+        } else {
+            assertEquals(member.getLevel(), memberUpdate.getLevel());
+        }
     }
 }
