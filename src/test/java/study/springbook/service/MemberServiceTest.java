@@ -71,21 +71,20 @@ class MemberServiceTest {
     @Test
     @DirtiesContext
     public void upgradeLevels() {
-        memberDao.deleteAll();
-        for (Member member : members) {
-            memberDao.add(member);
-        }
+        MemberServiceImpl memberServiceImpl = new MemberServiceImpl();
+
+        MockMemberDao mockMemberDao = new MockMemberDao(members);
+        memberServiceImpl.setMemberDao(mockMemberDao);
 
         MockMailSender mockMailSender = new MockMailSender();
         memberServiceImpl.setMailSender(mockMailSender);
 
-        memberService.upgradeLevels();
+        memberServiceImpl.upgradeLevels();
 
-        checkLevelUpgrade(members.get(0), false);
-        checkLevelUpgrade(members.get(1), true);
-        checkLevelUpgrade(members.get(2), false);
-        checkLevelUpgrade(members.get(3), true);
-        checkLevelUpgrade(members.get(4), false);
+        List<Member> updated = mockMemberDao.getUpdated();
+        assertEquals(2, updated.size());
+        checkMemberAndLevel(updated.get(0), "id2", Level.SILVER);
+        checkMemberAndLevel(updated.get(1), "id4", Level.GOLD);
 
         List<String> requests = mockMailSender.getRequests();
         assertEquals(2, requests.size());
@@ -128,6 +127,11 @@ class MemberServiceTest {
         }
     }
 
+    private void checkMemberAndLevel(Member updated, String expectedId, Level expectedLevel) {
+        assertEquals(expectedId, updated.getId());
+        assertEquals(expectedLevel, updated.getLevel());
+    }
+
     static class TestMemberService extends MemberServiceImpl {
         private String id;
 
@@ -162,6 +166,49 @@ class MemberServiceTest {
         @Override
         public void send(SimpleMailMessage... mailMessage) throws MailException {
 
+        }
+    }
+
+    static class MockMemberDao implements MemberDao {
+        private List<Member> members;
+        private List<Member> updated = new ArrayList<>();
+
+        public MockMemberDao(List<Member> members) {
+            this.members = members;
+        }
+
+        public List<Member> getUpdated() {
+            return updated;
+        }
+
+        @Override
+        public List<Member> getAll() {
+            return members;
+        }
+
+        @Override
+        public void update(Member member) {
+            updated.add(member);
+        }
+
+        @Override
+        public void add(Member member) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Member get(String id) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void deleteAll() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int getCount() {
+            throw new UnsupportedOperationException();
         }
     }
 }
