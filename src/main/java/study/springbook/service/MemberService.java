@@ -33,7 +33,7 @@ public class MemberService {
         }
     }
 
-    private void upgradeLevel(Member member) {
+    protected void upgradeLevel(Member member) {
         member.upgradeLevel();
         memberDao.update(member);
     }

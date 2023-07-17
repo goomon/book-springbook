@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import study.springbook.dao.MemberDao;
@@ -72,6 +73,27 @@ class MemberServiceTest {
         checkLevelUpgrade(members.get(4), false);
     }
 
+    @Test
+    @DirtiesContext
+    public void upgradeAllOrNothing() {
+        MemberService testMemberService = new TestMemberService(members.get(3).getId());
+        testMemberService.setMemberDao(memberDao);
+
+        memberDao.deleteAll();
+        for (Member member : members) {
+            memberDao.add(member);
+        }
+
+        try {
+            testMemberService.upgradeLevels();
+            fail("TestMemberServiceException expected");
+        } catch (TestMemberServiceException e) {
+
+        }
+
+        checkLevelUpgrade(members.get(1), false);
+    }
+
     private void checkLevelUpgrade(Member member, boolean upgraded) {
         Member memberUpdate = memberDao.get(member.getId());
         if (upgraded) {
@@ -79,5 +101,24 @@ class MemberServiceTest {
         } else {
             assertEquals(member.getLevel(), memberUpdate.getLevel());
         }
+    }
+
+    static class TestMemberService extends MemberService {
+        private String id;
+
+        public TestMemberService(String id) {
+            this.id = id;
+        }
+
+        @Override
+        protected void upgradeLevel(Member member) {
+            if (member.getId().equals(id)) {
+                throw new TestMemberServiceException();
+            }
+            super.upgradeLevel(member);
+        }
+    }
+
+    static class TestMemberServiceException extends RuntimeException {
     }
 }
