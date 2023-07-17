@@ -17,6 +17,7 @@ public class TestDaoFactory {
     public MemberService memberService() {
         MemberService memberService = new MemberService();
         memberService.setMemberDao(memberDao());
+        memberService.setDataSource(dataSource());
         return memberService;
     }
 

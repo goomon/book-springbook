@@ -12,6 +12,7 @@ import study.springbook.domain.Level;
 import study.springbook.domain.Member;
 import study.springbook.factory.TestDaoFactory;
 
+import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,6 +27,8 @@ class MemberServiceTest {
     private MemberDao memberDao;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private DataSource dataSource;
     private List<Member> members;
 
     @BeforeEach
@@ -58,7 +61,7 @@ class MemberServiceTest {
     }
 
     @Test
-    public void upgradeLevels() {
+    public void upgradeLevels() throws Exception {
         memberDao.deleteAll();
         for (Member member : members) {
             memberDao.add(member);
@@ -75,9 +78,10 @@ class MemberServiceTest {
 
     @Test
     @DirtiesContext
-    public void upgradeAllOrNothing() {
+    public void upgradeAllOrNothing() throws Exception {
         MemberService testMemberService = new TestMemberService(members.get(3).getId());
         testMemberService.setMemberDao(memberDao);
+        testMemberService.setDataSource(dataSource);
 
         memberDao.deleteAll();
         for (Member member : members) {
