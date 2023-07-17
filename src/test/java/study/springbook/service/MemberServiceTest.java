@@ -8,6 +8,7 @@ import org.springframework.mail.MailSender;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.transaction.PlatformTransactionManager;
 import study.springbook.dao.MemberDao;
 import study.springbook.domain.Level;
 import study.springbook.domain.Member;
@@ -27,6 +28,8 @@ class MemberServiceTest {
     private MemberDao memberDao;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private PlatformTransactionManager transactionManager;
     @Autowired
     private MailSender mailSender;
     private List<Member> members;
@@ -82,6 +85,7 @@ class MemberServiceTest {
         MemberService testMemberService = new TestMemberService(members.get(3).getId());
         testMemberService.setMemberDao(memberDao);
         testMemberService.setMailSender(mailSender);
+        testMemberService.setTransactionManager(transactionManager);
 
         memberDao.deleteAll();
         for (Member member : members) {
