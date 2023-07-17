@@ -4,7 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -14,6 +16,7 @@ import study.springbook.domain.Level;
 import study.springbook.domain.Member;
 import study.springbook.factory.TestDaoFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -64,11 +67,15 @@ class MemberServiceTest {
     }
 
     @Test
-    public void upgradeLevels() throws Exception {
+    @DirtiesContext
+    public void upgradeLevels() {
         memberDao.deleteAll();
         for (Member member : members) {
             memberDao.add(member);
         }
+
+        MockMailSender mockMailSender = new MockMailSender();
+        memberService.setMailSender(mockMailSender);
 
         memberService.upgradeLevels();
 
@@ -77,11 +84,16 @@ class MemberServiceTest {
         checkLevelUpgrade(members.get(2), false);
         checkLevelUpgrade(members.get(3), true);
         checkLevelUpgrade(members.get(4), false);
+
+        List<String> requests = mockMailSender.getRequests();
+        assertEquals(2, requests.size());
+        assertEquals(members.get(1).getEmail(), requests.get(0));
+        assertEquals(members.get(3).getEmail(), requests.get(1));
     }
 
     @Test
     @DirtiesContext
-    public void upgradeAllOrNothing() throws Exception {
+    public void upgradeAllOrNothing() {
         MemberService testMemberService = new TestMemberService(members.get(3).getId());
         testMemberService.setMemberDao(memberDao);
         testMemberService.setMailSender(mailSender);
@@ -128,5 +140,23 @@ class MemberServiceTest {
     }
 
     static class TestMemberServiceException extends RuntimeException {
+    }
+
+    static class MockMailSender implements MailSender {
+        private List<String> requests = new ArrayList<>();
+
+        public List<String> getRequests() {
+            return requests;
+        }
+
+        @Override
+        public void send(SimpleMailMessage mailMessage) throws MailException {
+            requests.add(mailMessage.getTo()[0]);
+        }
+
+        @Override
+        public void send(SimpleMailMessage... mailMessage) throws MailException {
+
+        }
     }
 }
