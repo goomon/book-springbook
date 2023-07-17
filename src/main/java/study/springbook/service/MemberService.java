@@ -1,19 +1,20 @@
 package study.springbook.service;
 
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import study.springbook.dao.MemberDao;
 import study.springbook.domain.Level;
 import study.springbook.domain.Member;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.util.List;
 
 public class MemberService {
 
     private MemberDao memberDao;
     private DataSource dataSource;
+    private PlatformTransactionManager transactionManager;
 
     public static final int MIN_LOGIN_FOR_SILVER = 30;
     public static final int MIN_RECOMMEND_FOR_GOLD = 50;
@@ -26,6 +27,10 @@ public class MemberService {
         this.dataSource = dataSource;
     }
 
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+    }
+
     public void add(Member member) {
         if (member.getLevel() == null) {
             member.setLevel(Level.BASIC);
@@ -33,11 +38,9 @@ public class MemberService {
         memberDao.add(member);
     }
 
-    public void upgradeLevels() throws Exception {
-        TransactionSynchronizationManager.initSynchronization();
-        Connection c = DataSourceUtils.getConnection(dataSource);
-        c.setAutoCommit(false);
-
+    public void upgradeLevels() {
+        // Transaction starts.
+        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
         try {
             List<Member> members = memberDao.getAll();
             for (Member member : members) {
@@ -45,14 +48,10 @@ public class MemberService {
                     upgradeLevel(member);
                 }
             }
-            c.commit();
-        } catch (Exception e) {
-            c.rollback();
+            transactionManager.commit(status);
+        } catch (RuntimeException e) {
+            transactionManager.rollback(status);
             throw e;
-        } finally {
-            DataSourceUtils.releaseConnection(c, dataSource);
-            TransactionSynchronizationManager.unbindResource(dataSource);
-            TransactionSynchronizationManager.clearSynchronization();
         }
     }
 

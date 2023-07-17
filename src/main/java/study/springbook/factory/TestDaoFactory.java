@@ -2,7 +2,9 @@ package study.springbook.factory;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.transaction.PlatformTransactionManager;
 import study.springbook.dao.JdbcContext;
 import study.springbook.dao.MemberDao;
 import study.springbook.dao.MemberDaoJdbc;
@@ -18,6 +20,7 @@ public class TestDaoFactory {
         MemberService memberService = new MemberService();
         memberService.setMemberDao(memberDao());
         memberService.setDataSource(dataSource());
+        memberService.setTransactionManager(transactionManager());
         return memberService;
     }
 
@@ -32,6 +35,12 @@ public class TestDaoFactory {
         JdbcContext jdbcContext = new JdbcContext();
         jdbcContext.setDataSource(dataSource());
         return jdbcContext;
+    }
+
+
+    @Bean
+    public PlatformTransactionManager transactionManager() {
+        return new DataSourceTransactionManager(dataSource());
     }
 
     @Bean
