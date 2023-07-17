@@ -24,21 +24,24 @@ public class MemberService {
     public void upgradeLevels() {
         List<Member> members = memberDao.getAll();
         for (Member member : members) {
-            Boolean changed = null;
-            if (member.getLevel() == Level.BASIC && member.getLogin() >= 50) {
-                member.setLevel(Level.SILVER);
-                changed = true;
-            } else if (member.getLevel() == Level.SILVER && member.getRecommend() >= 30) {
-                member.setLevel(Level.GOLD);
-                changed = true;
-            } else if (member.getLevel() == Level.GOLD) {
-                changed = false;
-            } else {
-                changed = false;
-            }
-            if (changed) {
-                memberDao.update(member);
+            if (canUpgradeLevel(member)) {
+                upgradeLevel(member);
             }
         }
+    }
+
+    private void upgradeLevel(Member member) {
+        member.upgradeLevel();
+        memberDao.update(member);
+    }
+
+    private boolean canUpgradeLevel(Member member) {
+        Level level = member.getLevel();
+        return switch (level) {
+            case BASIC -> member.getLogin() >= 50;
+            case SILVER -> member.getRecommend() >= 30;
+            case GOLD -> false;
+            default -> throw new IllegalArgumentException("Unknown Level: " + level);
+        };
     }
 }
