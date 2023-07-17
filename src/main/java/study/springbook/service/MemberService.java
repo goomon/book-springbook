@@ -14,6 +14,13 @@ public class MemberService {
         this.memberDao = memberDao;
     }
 
+    public void add(Member member) {
+        if (member.getLevel() == null) {
+            member.setLevel(Level.BASIC);
+        }
+        memberDao.add(member);
+    }
+
     public void upgradeLevels() {
         List<Member> members = memberDao.getAll();
         for (Member member : members) {

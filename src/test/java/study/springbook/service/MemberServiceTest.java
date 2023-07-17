@@ -38,6 +38,24 @@ class MemberServiceTest {
     }
 
     @Test
+    public void add() {
+        memberDao.deleteAll();
+
+        Member memberWithLevel = members.get(4);
+        Member memberWithoutLevel = members.get(0);
+        memberWithoutLevel.setLevel(null);
+
+        memberService.add(memberWithLevel);
+        memberService.add(memberWithoutLevel);
+
+        Member memberWithLevelRead = memberDao.get(memberWithLevel.getId());
+        Member memberWithoutLevelRead = memberDao.get(memberWithoutLevel.getId());
+
+        assertEquals(memberWithLevelRead.getLevel(), memberWithLevel.getLevel());
+        assertEquals(memberWithoutLevelRead.getLevel(), Level.BASIC);
+    }
+
+    @Test
     public void upgradeLevels() {
         memberDao.deleteAll();
         for (Member member : members) {
