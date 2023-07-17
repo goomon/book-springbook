@@ -19,7 +19,6 @@ public class DaoFactory {
     public MemberService memberService() {
         MemberService memberService = new MemberService();
         memberService.setMemberDao(memberDao());
-        memberService.setDataSource(dataSource());
         memberService.setTransactionManager(transactionManager());
         return memberService;
     }

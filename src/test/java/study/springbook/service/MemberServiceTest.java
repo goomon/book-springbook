@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mail.MailSender;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -12,7 +13,6 @@ import study.springbook.domain.Level;
 import study.springbook.domain.Member;
 import study.springbook.factory.TestDaoFactory;
 
-import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,7 +28,7 @@ class MemberServiceTest {
     @Autowired
     private MemberService memberService;
     @Autowired
-    private DataSource dataSource;
+    private MailSender mailSender;
     private List<Member> members;
 
     @BeforeEach
@@ -81,7 +81,7 @@ class MemberServiceTest {
     public void upgradeAllOrNothing() throws Exception {
         MemberService testMemberService = new TestMemberService(members.get(3).getId());
         testMemberService.setMemberDao(memberDao);
-        testMemberService.setDataSource(dataSource);
+        testMemberService.setMailSender(mailSender);
 
         memberDao.deleteAll();
         for (Member member : members) {

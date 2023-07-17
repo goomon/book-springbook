@@ -4,6 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.transaction.PlatformTransactionManager;
 import study.springbook.dao.JdbcContext;
 import study.springbook.dao.MemberDao;
@@ -19,8 +21,8 @@ public class TestDaoFactory {
     public MemberService memberService() {
         MemberService memberService = new MemberService();
         memberService.setMemberDao(memberDao());
-        memberService.setDataSource(dataSource());
         memberService.setTransactionManager(transactionManager());
+        memberService.setMailSender(mailSender());
         return memberService;
     }
 
@@ -53,5 +55,12 @@ public class TestDaoFactory {
         dataSource.setPassword("postgres");
 
         return dataSource;
+    }
+
+    @Bean
+    public MailSender mailSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost("mail.org");
+        return mailSender;
     }
 }
