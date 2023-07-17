@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import study.springbook.dao.JdbcContext;
 import study.springbook.dao.MemberDao;
+import study.springbook.dao.MemberDaoJdbc;
 
 import javax.sql.DataSource;
 
@@ -13,8 +14,7 @@ public class DaoFactory {
 
     @Bean
     public MemberDao memberDao() {
-        MemberDao memberDao = new MemberDao();
-        memberDao.setDataSource(dataSource());
+        MemberDao memberDao = new MemberDaoJdbc(dataSource());
         return memberDao;
     }
 

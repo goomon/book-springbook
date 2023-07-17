@@ -8,6 +8,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import study.springbook.domain.Member;
+import study.springbook.exception.DuplicateMemberIdException;
 import study.springbook.factory.TestDaoFactory;
 
 import java.sql.SQLException;
@@ -82,12 +83,23 @@ class MemberDaoTest {
     }
 
     @Test
-    public void getUserFailure() throws SQLException {
+    public void getUserFailure() {
         dao.deleteAll();
         assertEquals(dao.getCount(), 0);
 
         assertThrows(EmptyResultDataAccessException.class, () -> {
             dao.get("unknown");
+        });
+    }
+
+    @Test
+    public void duplicateKey() {
+        dao.deleteAll();
+        assertEquals(dao.getCount(), 0);
+
+        dao.add(member1);
+        assertThrows(DuplicateMemberIdException.class, () -> {
+            dao.add(member1);
         });
     }
 
