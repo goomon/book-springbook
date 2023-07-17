@@ -6,11 +6,19 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import study.springbook.dao.JdbcContext;
 import study.springbook.dao.MemberDao;
 import study.springbook.dao.MemberDaoJdbc;
+import study.springbook.service.MemberService;
 
 import javax.sql.DataSource;
 
 @Configuration
 public class TestDaoFactory {
+
+    @Bean
+    public MemberService memberService() {
+        MemberService memberService = new MemberService();
+        memberService.setMemberDao(memberDao());
+        return memberService;
+    }
 
     @Bean
     public MemberDao memberDao() {
