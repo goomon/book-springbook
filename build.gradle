@@ -19,8 +19,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.postgresql:postgresql'
-	implementation 'javax.mail:mail:1.4.7'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.mockito:mockito-core:5.4.0'
 }
 
 tasks.named('test') {

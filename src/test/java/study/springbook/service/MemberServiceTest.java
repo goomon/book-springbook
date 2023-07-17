@@ -2,6 +2,8 @@ package study.springbook.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.MailException;
@@ -21,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static study.springbook.service.MemberServiceImpl.*;
 
 @SpringBootTest
@@ -90,6 +93,32 @@ class MemberServiceTest {
         assertEquals(2, requests.size());
         assertEquals(members.get(1).getEmail(), requests.get(0));
         assertEquals(members.get(3).getEmail(), requests.get(1));
+    }
+
+    @Test
+    public void mockUpgradeLevels() {
+        MemberServiceImpl memberServiceImpl = new MemberServiceImpl();
+
+        MemberDao mockMemberDao = mock(MemberDao.class);
+        when(mockMemberDao.getAll()).thenReturn(members);
+        memberServiceImpl.setMemberDao(mockMemberDao);
+
+        MailSender mockMailSender = mock(MailSender.class);
+        memberServiceImpl.setMailSender(mockMailSender);
+
+        memberServiceImpl.upgradeLevels();
+
+        verify(mockMemberDao, times(2)).update(any(Member.class));
+        verify(mockMemberDao).update(members.get(1));
+        assertEquals(Level.SILVER, members.get(1).getLevel());
+        verify(mockMemberDao).update(members.get(3));
+        assertEquals(Level.GOLD, members.get(3).getLevel());
+
+        ArgumentCaptor<SimpleMailMessage> mailMessageArg = ArgumentCaptor.forClass(SimpleMailMessage.class);
+        verify(mockMailSender, times(2)).send(mailMessageArg.capture());
+        List<SimpleMailMessage> mailMessages = mailMessageArg.getAllValues();
+        assertEquals(members.get(1).getEmail(), mailMessages.get(0).getTo()[0]);
+        assertEquals(members.get(3).getEmail(), mailMessages.get(1).getTo()[0]);
     }
 
     @Test
