@@ -16,6 +16,7 @@ import study.springbook.domain.Level;
 import study.springbook.domain.Member;
 import study.springbook.factory.TestDaoFactory;
 
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -130,6 +131,11 @@ class MemberServiceTest {
         }
 
         checkLevelUpgrade(members.get(1), false);
+    }
+
+    @Test
+    public void advisorAutoProxyCreator() {
+        assertThat(testMemberService).isInstanceOf(Proxy.class);
     }
 
     private void checkLevelUpgrade(Member member, boolean upgraded) {
