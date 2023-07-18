@@ -15,7 +15,7 @@ import study.springbook.factory.TestDaoFactory;
 import java.sql.SQLException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @ContextConfiguration(classes = TestDaoFactory.class, loader = AnnotationConfigContextLoader.class)
@@ -39,22 +39,22 @@ class MemberDaoTest {
         dao.deleteAll();
 
         List<Member> members0 = dao.getAll();
-        assertEquals(0, members0.size());
+        assertThat(members0.size()).isEqualTo(0);
 
         dao.add(member1);
         List<Member> members1 = dao.getAll();
-        assertEquals(1, members1.size());
+        assertThat(members1.size()).isEqualTo(1);
         checkSameMember(member1, members1.get(0));
 
         dao.add(member2);
         List<Member> members2 = dao.getAll();
-        assertEquals(2, members2.size());
+        assertThat(members2.size()).isEqualTo(2);
         checkSameMember(member1, members2.get(0));
         checkSameMember(member2, members2.get(1));
 
         dao.add(member3);
         List<Member> members3 = dao.getAll();
-        assertEquals(3, members3.size());
+        assertThat(members3.size()).isEqualTo(3);
         checkSameMember(member1, members3.get(0));
         checkSameMember(member2, members3.get(1));
         checkSameMember(member3, members3.get(2));
@@ -63,45 +63,41 @@ class MemberDaoTest {
     @Test
     public void addAndGet() throws SQLException, ClassNotFoundException {
         dao.deleteAll();
-        assertEquals(0, dao.getCount());
+        assertThat(dao.getCount()).isEqualTo(0);
 
         dao.add(member1);
-        assertEquals(1, dao.getCount());
+        assertThat(dao.getCount()).isEqualTo(1);
 
         dao.add(member2);
-        assertEquals(2, dao.getCount());
+        assertThat(dao.getCount()).isEqualTo(2);
 
         dao.add(member3);
-        assertEquals(3, dao.getCount());
+        assertThat(dao.getCount()).isEqualTo(3);
 
         Member data1 = dao.get(member1.getId());
-        assertEquals(member1.getName(), data1.getName());
-        assertEquals(member1.getPassword(), data1.getPassword());
+        assertThat(data1.getName()).isEqualTo(member1.getName());
+        assertThat(data1.getPassword()).isEqualTo(member1.getPassword());
 
         Member data2 = dao.get(member2.getId());
-        assertEquals(member2.getName(), data2.getName());
-        assertEquals(member2.getPassword(), data2.getPassword());
+        assertThat(data2.getName()).isEqualTo(member2.getName());
+        assertThat(data2.getPassword()).isEqualTo(member2.getPassword());
     }
 
     @Test
     public void getUserFailure() {
         dao.deleteAll();
-        assertEquals(0, dao.getCount());
+        assertThat(dao.getCount()).isEqualTo(0);
 
-        assertThrows(EmptyResultDataAccessException.class, () -> {
-            dao.get("unknown");
-        });
+        assertThatThrownBy(() -> dao.get("unknown")).isInstanceOf(EmptyResultDataAccessException.class);
     }
 
     @Test
     public void duplicateKey() {
         dao.deleteAll();
-        assertEquals(0, dao.getCount());
+        assertThat(dao.getCount()).isEqualTo(0);
 
         dao.add(member1);
-        assertThrows(DuplicateMemberIdException.class, () -> {
-            dao.add(member1);
-        });
+        assertThatThrownBy(() -> dao.add(member1)).isInstanceOf(DuplicateMemberIdException.class);
     }
 
     @Test
@@ -126,11 +122,11 @@ class MemberDaoTest {
     }
 
     private void checkSameMember(Member member1, Member member2) {
-        assertEquals(member2.getId(), member1.getId());
-        assertEquals(member2.getName(), member1.getName());
-        assertEquals(member2.getPassword(), member1.getPassword());
-        assertEquals(member2.getLevel(), member1.getLevel());
-        assertEquals(member2.getLogin(), member1.getLogin());
-        assertEquals(member2.getRecommend(), member1.getRecommend());
+        assertThat(member1.getId()).isEqualTo(member2.getId());
+        assertThat(member1.getName()).isEqualTo(member2.getName());
+        assertThat(member1.getPassword()).isEqualTo(member2.getPassword());
+        assertThat(member1.getLevel()).isEqualTo(member2.getLevel());
+        assertThat(member1.getLogin()).isEqualTo(member2.getLogin());
+        assertThat(member1.getRecommend()).isEqualTo(member2.getRecommend());
     }
 }

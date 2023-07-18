@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static study.springbook.service.MemberServiceImpl.*;
 
@@ -61,8 +61,8 @@ class MemberServiceTest {
         Member memberWithLevelRead = memberDao.get(memberWithLevel.getId());
         Member memberWithoutLevelRead = memberDao.get(memberWithoutLevel.getId());
 
-        assertEquals(memberWithLevel.getLevel(), memberWithLevelRead.getLevel());
-        assertEquals(Level.BASIC, memberWithoutLevelRead.getLevel());
+        assertThat(memberWithLevelRead.getLevel()).isEqualTo(memberWithLevel.getLevel());
+        assertThat(memberWithoutLevelRead.getLevel()).isEqualTo(Level.BASIC);
     }
 
     @Test
@@ -79,14 +79,14 @@ class MemberServiceTest {
         memberServiceImpl.upgradeLevels();
 
         List<Member> updated = mockMemberDao.getUpdated();
-        assertEquals(2, updated.size());
+        assertThat(updated.size()).isEqualTo(2);
         checkMemberAndLevel(updated.get(0), "id2", Level.SILVER);
         checkMemberAndLevel(updated.get(1), "id4", Level.GOLD);
 
         List<String> requests = mockMailSender.getRequests();
-        assertEquals(2, requests.size());
-        assertEquals(members.get(1).getEmail(), requests.get(0));
-        assertEquals(members.get(3).getEmail(), requests.get(1));
+        assertThat(requests.size()).isEqualTo(2);
+        assertThat(requests.get(0)).isEqualTo(members.get(1).getEmail());
+        assertThat(requests.get(1)).isEqualTo(members.get(3).getEmail());
     }
 
     @Test
@@ -104,15 +104,15 @@ class MemberServiceTest {
 
         verify(mockMemberDao, times(2)).update(any(Member.class));
         verify(mockMemberDao).update(members.get(1));
-        assertEquals(Level.SILVER, members.get(1).getLevel());
+        assertThat(members.get(1).getLevel()).isEqualTo(Level.SILVER);
         verify(mockMemberDao).update(members.get(3));
-        assertEquals(Level.GOLD, members.get(3).getLevel());
+        assertThat(members.get(3).getLevel()).isEqualTo(Level.GOLD);
 
         ArgumentCaptor<SimpleMailMessage> mailMessageArg = ArgumentCaptor.forClass(SimpleMailMessage.class);
         verify(mockMailSender, times(2)).send(mailMessageArg.capture());
         List<SimpleMailMessage> mailMessages = mailMessageArg.getAllValues();
-        assertEquals(members.get(1).getEmail(), mailMessages.get(0).getTo()[0]);
-        assertEquals(members.get(3).getEmail(), mailMessages.get(1).getTo()[0]);
+        assertThat(mailMessages.get(0).getTo()[0]).isEqualTo(members.get(1).getEmail());
+        assertThat(mailMessages.get(1).getTo()[0]).isEqualTo(members.get(3).getEmail());
     }
 
     @Test
@@ -135,15 +135,15 @@ class MemberServiceTest {
     private void checkLevelUpgrade(Member member, boolean upgraded) {
         Member memberUpdate = memberDao.get(member.getId());
         if (upgraded) {
-            assertEquals(member.getLevel().nextLevel(), memberUpdate.getLevel());
+            assertThat(memberUpdate.getLevel()).isEqualTo(member.getLevel().nextLevel());
         } else {
-            assertEquals(member.getLevel(), memberUpdate.getLevel());
+            assertThat(memberUpdate.getLevel()).isEqualTo(member.getLevel());
         }
     }
 
     private void checkMemberAndLevel(Member updated, String expectedId, Level expectedLevel) {
-        assertEquals(expectedId, updated.getId());
-        assertEquals(expectedLevel, updated.getLevel());
+        assertThat(updated.getId()).isEqualTo(expectedId);
+        assertThat(updated.getLevel()).isEqualTo(expectedLevel);
     }
 
     static class MockMailSender implements MailSender {

@@ -3,7 +3,7 @@ package study.springbook.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 class MemberTest {
 
@@ -21,7 +21,7 @@ class MemberTest {
             if (level.nextLevel() != null) {
                 member.setLevel(level);
                 member.upgradeLevel();
-                assertEquals(level.nextLevel(), member.getLevel());
+                assertThat(member.getLevel()).isEqualTo(level.nextLevel());
             }
         }
     }
@@ -34,7 +34,7 @@ class MemberTest {
                 continue;
             }
             member.setLevel(level);
-            assertThrows(IllegalStateException.class,() -> member.upgradeLevel());
+            assertThatThrownBy(() -> member.upgradeLevel()).isInstanceOf(IllegalStateException.class);
         }
     }
 }

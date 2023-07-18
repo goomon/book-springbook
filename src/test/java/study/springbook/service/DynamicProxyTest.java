@@ -13,7 +13,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 public class DynamicProxyTest {
 
@@ -24,9 +24,9 @@ public class DynamicProxyTest {
                 new Class[]{Hello.class},
                 new UppercaseHandler(new HelloTarget())
         );
-        assertEquals("HELLO NAME", proxyHello.sayHello("name"));
-        assertEquals("HI NAME", proxyHello.sayHi("name"));
-        assertEquals("THANK YOU NAME", proxyHello.sayThankYou("name"));
+        assertThat(proxyHello.sayHello("name")).isEqualTo("HELLO NAME");
+        assertThat(proxyHello.sayHi("name")).isEqualTo("HI NAME");
+        assertThat(proxyHello.sayThankYou("name")).isEqualTo("THANK YOU NAME");
     }
 
     @Test
@@ -36,9 +36,9 @@ public class DynamicProxyTest {
         proxyFactoryBean.addAdvice(new UppercaseAdvice());
 
         Hello proxyHello = (Hello) proxyFactoryBean.getObject();
-        assertEquals("HELLO NAME", proxyHello.sayHello("name"));
-        assertEquals("HI NAME", proxyHello.sayHi("name"));
-        assertEquals("THANK YOU NAME", proxyHello.sayThankYou("name"));
+        assertThat(proxyHello.sayHello("name")).isEqualTo("HELLO NAME");
+        assertThat(proxyHello.sayHi("name")).isEqualTo("HI NAME");
+        assertThat(proxyHello.sayThankYou("name")).isEqualTo("THANK YOU NAME");
     }
 
     @Test
@@ -53,9 +53,9 @@ public class DynamicProxyTest {
 
         Hello proxyHello = (Hello) proxyFactoryBean.getObject();
 
-        assertEquals("HELLO NAME", proxyHello.sayHello("name"));
-        assertEquals("HI NAME", proxyHello.sayHi("name"));
-        assertEquals("Thank you name", proxyHello.sayThankYou("name"));
+        assertThat(proxyHello.sayHello("name")).isEqualTo("HELLO NAME");
+        assertThat(proxyHello.sayHi("name")).isEqualTo("HI NAME");
+        assertThat(proxyHello.sayThankYou("name")).isEqualTo("Thank you name");
     }
 
     @Test
@@ -86,13 +86,13 @@ public class DynamicProxyTest {
         Hello proxyHello = (Hello) proxyFactoryBean.getObject();
 
         if (adviced) {
-            assertEquals("HELLO NAME", proxyHello.sayHello("name"));
-            assertEquals("HI NAME", proxyHello.sayHi("name"));
-            assertEquals("Thank you name", proxyHello.sayThankYou("name"));
+            assertThat(proxyHello.sayHello("name")).isEqualTo("HELLO NAME");
+            assertThat(proxyHello.sayHi("name")).isEqualTo("HI NAME");
+            assertThat(proxyHello.sayThankYou("name")).isEqualTo("Thank you name");
         } else {
-            assertEquals("Hello name", proxyHello.sayHello("name"));
-            assertEquals("Hi name", proxyHello.sayHi("name"));
-            assertEquals("Thank you name", proxyHello.sayThankYou("name"));
+            assertThat(proxyHello.sayHello("name")).isEqualTo("Hello name");
+            assertThat(proxyHello.sayHi("name")).isEqualTo("Hi name");
+            assertThat(proxyHello.sayThankYou("name")).isEqualTo("Thank you name");
         }
     }
 
