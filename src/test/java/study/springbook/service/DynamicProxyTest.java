@@ -1,6 +1,9 @@
 package study.springbook.service;
 
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
 import org.junit.jupiter.api.Test;
+import org.springframework.aop.framework.ProxyFactoryBean;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -20,6 +23,26 @@ public class DynamicProxyTest {
         assertEquals("HELLO NAME", proxyHello.sayHello("name"));
         assertEquals("HI NAME", proxyHello.sayHi("name"));
         assertEquals("THANK YOU NAME", proxyHello.sayThankYou("name"));
+    }
+
+    @Test
+    public void proxyFactoryBean() {
+        ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
+        proxyFactoryBean.setTarget(new HelloTarget());
+        proxyFactoryBean.addAdvice(new UppercaseAdvice());
+
+        Hello proxyHello = (Hello) proxyFactoryBean.getObject();
+        assertEquals("HELLO NAME", proxyHello.sayHello("name"));
+        assertEquals("HI NAME", proxyHello.sayHi("name"));
+        assertEquals("THANK YOU NAME", proxyHello.sayThankYou("name"));
+    }
+
+    static class UppercaseAdvice implements MethodInterceptor {
+        @Override
+        public Object invoke(MethodInvocation invocation) throws Throwable {
+            String ret = (String) invocation.proceed();
+            return ret.toUpperCase();
+        }
     }
 
     static class UppercaseHandler implements InvocationHandler {
