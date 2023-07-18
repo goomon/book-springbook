@@ -3,7 +3,6 @@ package study.springbook.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.MailException;
@@ -17,7 +16,9 @@ import study.springbook.dao.MemberDao;
 import study.springbook.domain.Level;
 import study.springbook.domain.Member;
 import study.springbook.factory.TestDaoFactory;
+import study.springbook.handler.TransactionHandler;
 
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -128,9 +129,14 @@ class MemberServiceTest {
         testMemberService.setMemberDao(memberDao);
         testMemberService.setMailSender(mailSender);
 
-        MemberServiceTx memberServiceTx = new MemberServiceTx();
-        memberServiceTx.setTransactionManager(transactionManager);
-        memberServiceTx.setMemberService(testMemberService);
+        TransactionHandler txHandler = new TransactionHandler();
+        txHandler.setTarget(testMemberService);
+        txHandler.setTransactionManager(transactionManager);
+        txHandler.setPattern("upgradeLevels");
+
+        MemberService memberServiceTx = (MemberService) Proxy.newProxyInstance(
+                getClass().getClassLoader(), new Class[]{MemberService.class}, txHandler
+        );
 
         memberDao.deleteAll();
         for (Member member : members) {
