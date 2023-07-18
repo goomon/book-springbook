@@ -3,10 +3,8 @@ package study.springbook.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -31,13 +29,11 @@ import static study.springbook.service.MemberServiceImpl.*;
 class MemberServiceTest {
 
     @Autowired
-    private ApplicationContext context;
-    @Autowired
     private MemberDao memberDao;
     @Autowired
     private MemberService memberService;
     @Autowired
-    private MailSender mailSender;
+    private MemberService testMemberService;
     private List<Member> members;
 
     @BeforeEach
@@ -120,23 +116,14 @@ class MemberServiceTest {
     }
 
     @Test
-    @DirtiesContext
     public void upgradeAllOrNothing() throws Exception {
-        MemberServiceImpl testMemberService = new TestMemberService(members.get(3).getId());
-        testMemberService.setMemberDao(memberDao);
-        testMemberService.setMailSender(mailSender);
-
-        ProxyFactoryBean proxyFactoryBean = context.getBean("&memberService", ProxyFactoryBean.class);
-        proxyFactoryBean.setTarget(testMemberService);
-        MemberService memberServiceTx = (MemberService) proxyFactoryBean.getObject();
-
         memberDao.deleteAll();
         for (Member member : members) {
             memberDao.add(member);
         }
 
         try {
-            memberServiceTx.upgradeLevels();
+            testMemberService.upgradeLevels();
             fail("TestMemberServiceException expected");
         } catch (TestMemberServiceException e) {
 
@@ -157,25 +144,6 @@ class MemberServiceTest {
     private void checkMemberAndLevel(Member updated, String expectedId, Level expectedLevel) {
         assertEquals(expectedId, updated.getId());
         assertEquals(expectedLevel, updated.getLevel());
-    }
-
-    static class TestMemberService extends MemberServiceImpl {
-        private String id;
-
-        public TestMemberService(String id) {
-            this.id = id;
-        }
-
-        @Override
-        protected void upgradeLevel(Member member) {
-            if (member.getId().equals(id)) {
-                throw new TestMemberServiceException();
-            }
-            super.upgradeLevel(member);
-        }
-    }
-
-    static class TestMemberServiceException extends RuntimeException {
     }
 
     static class MockMailSender implements MailSender {

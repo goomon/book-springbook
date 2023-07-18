@@ -1,8 +1,7 @@
 package study.springbook.factory;
 
-import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
-import org.springframework.aop.support.NameMatchMethodPointcut;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -19,18 +18,10 @@ import javax.sql.DataSource;
 public class DaoFactory {
 
     @Bean
-    public ProxyFactoryBean memberService() {
-        ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
-        proxyFactoryBean.setTarget(memberServiceImpl());
-        proxyFactoryBean.addAdvisor(transactionAdvisor());
-        return proxyFactoryBean;
-    }
-
-    @Bean
-    public MemberServiceImpl memberServiceImpl() {
-        MemberServiceImpl memberServiceImpl = new MemberServiceImpl();
-        memberServiceImpl.setMemberDao(memberDao());
-        return memberServiceImpl;
+    public MemberServiceImpl memberService() {
+        MemberServiceImpl memberService = new MemberServiceImpl();
+        memberService.setMemberDao(memberDao());
+        return memberService;
     }
 
     @Bean
@@ -71,8 +62,9 @@ public class DaoFactory {
     }
 
     @Bean
-    public NameMatchMethodPointcut transactionPointcut() {
-        NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
+    public NameMatchClassMethodPointcut transactionPointcut() {
+        NameMatchClassMethodPointcut pointcut = new NameMatchClassMethodPointcut();
+        pointcut.setMappedClassName("*ServiceImpl");
         pointcut.setMappedName("upgrade*");
         return pointcut;
     }
@@ -83,5 +75,10 @@ public class DaoFactory {
         advisor.setAdvice(transactionAdvice());
         advisor.setPointcut(transactionPointcut());
         return advisor;
+    }
+
+    @Bean
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        return new DefaultAdvisorAutoProxyCreator();
     }
 }
