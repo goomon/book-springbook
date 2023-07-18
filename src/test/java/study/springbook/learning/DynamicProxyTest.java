@@ -1,4 +1,4 @@
-package study.springbook.service;
+package study.springbook.learning;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
