@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -16,9 +17,7 @@ import study.springbook.dao.MemberDao;
 import study.springbook.domain.Level;
 import study.springbook.domain.Member;
 import study.springbook.factory.TestDaoFactory;
-import study.springbook.handler.TransactionHandler;
 
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +30,8 @@ import static study.springbook.service.MemberServiceImpl.*;
 @ContextConfiguration(classes = TestDaoFactory.class, loader = AnnotationConfigContextLoader.class)
 class MemberServiceTest {
 
+    @Autowired
+    private ApplicationContext context;
     @Autowired
     private MemberDao memberDao;
     @Autowired
@@ -124,19 +125,14 @@ class MemberServiceTest {
 
     @Test
     @DirtiesContext
-    public void upgradeAllOrNothing() {
+    public void upgradeAllOrNothing() throws Exception {
         MemberServiceImpl testMemberService = new TestMemberService(members.get(3).getId());
         testMemberService.setMemberDao(memberDao);
         testMemberService.setMailSender(mailSender);
 
-        TransactionHandler txHandler = new TransactionHandler();
-        txHandler.setTarget(testMemberService);
-        txHandler.setTransactionManager(transactionManager);
-        txHandler.setPattern("upgradeLevels");
-
-        MemberService memberServiceTx = (MemberService) Proxy.newProxyInstance(
-                getClass().getClassLoader(), new Class[]{MemberService.class}, txHandler
-        );
+        TxProxyFactoryBean txProxyFactoryBean = context.getBean("&memberService", TxProxyFactoryBean.class);
+        txProxyFactoryBean.setTarget(testMemberService);
+        MemberService memberServiceTx = (MemberService) txProxyFactoryBean.getObject();
 
         memberDao.deleteAll();
         for (Member member : members) {

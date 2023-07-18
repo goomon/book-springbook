@@ -9,9 +9,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import study.springbook.dao.JdbcContext;
 import study.springbook.dao.MemberDao;
 import study.springbook.dao.MemberDaoJdbc;
-import study.springbook.service.DummyMailSender;
-import study.springbook.service.MemberServiceImpl;
-import study.springbook.service.MemberServiceTx;
+import study.springbook.service.*;
 
 import javax.sql.DataSource;
 
@@ -19,11 +17,13 @@ import javax.sql.DataSource;
 public class TestDaoFactory {
 
     @Bean
-    public MemberServiceTx memberService() {
-        MemberServiceTx memberServiceTx = new MemberServiceTx();
-        memberServiceTx.setMemberService(memberServiceImpl());
-        memberServiceTx.setTransactionManager(transactionManager());
-        return memberServiceTx;
+    public TxProxyFactoryBean memberService() {
+        TxProxyFactoryBean txProxyFactoryBean = new TxProxyFactoryBean();
+        txProxyFactoryBean.setTarget(memberServiceImpl());
+        txProxyFactoryBean.setTransactionManager(transactionManager());
+        txProxyFactoryBean.setPattern("upgradeLevels");
+        txProxyFactoryBean.setServiceInterface(MemberService.class);
+        return txProxyFactoryBean;
     }
 
     @Bean
