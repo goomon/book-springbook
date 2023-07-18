@@ -3,6 +3,7 @@ package study.springbook.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -130,9 +131,9 @@ class MemberServiceTest {
         testMemberService.setMemberDao(memberDao);
         testMemberService.setMailSender(mailSender);
 
-        TxProxyFactoryBean txProxyFactoryBean = context.getBean("&memberService", TxProxyFactoryBean.class);
-        txProxyFactoryBean.setTarget(testMemberService);
-        MemberService memberServiceTx = (MemberService) txProxyFactoryBean.getObject();
+        ProxyFactoryBean proxyFactoryBean = context.getBean("&memberService", ProxyFactoryBean.class);
+        proxyFactoryBean.setTarget(testMemberService);
+        MemberService memberServiceTx = (MemberService) proxyFactoryBean.getObject();
 
         memberDao.deleteAll();
         for (Member member : members) {

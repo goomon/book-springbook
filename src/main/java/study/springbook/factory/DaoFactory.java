@@ -1,5 +1,8 @@
 package study.springbook.factory;
 
+import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
+import org.springframework.aop.support.NameMatchMethodPointcut;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -8,10 +11,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import study.springbook.dao.JdbcContext;
 import study.springbook.dao.MemberDao;
 import study.springbook.dao.MemberDaoJdbc;
-import study.springbook.service.MemberService;
-import study.springbook.service.MemberServiceImpl;
-import study.springbook.service.MemberServiceTx;
-import study.springbook.service.TxProxyFactoryBean;
+import study.springbook.service.*;
 
 import javax.sql.DataSource;
 
@@ -19,13 +19,11 @@ import javax.sql.DataSource;
 public class DaoFactory {
 
     @Bean
-    public TxProxyFactoryBean memberService() {
-        TxProxyFactoryBean txProxyFactoryBean = new TxProxyFactoryBean();
-        txProxyFactoryBean.setTarget(memberServiceImpl());
-        txProxyFactoryBean.setTransactionManager(transactionManager());
-        txProxyFactoryBean.setPattern("upgradeLevels");
-        txProxyFactoryBean.setServiceInterface(MemberService.class);
-        return txProxyFactoryBean;
+    public ProxyFactoryBean memberService() {
+        ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
+        proxyFactoryBean.setTarget(memberServiceImpl());
+        proxyFactoryBean.addAdvisor(transactionAdvisor());
+        return proxyFactoryBean;
     }
 
     @Bean
@@ -63,5 +61,27 @@ public class DaoFactory {
         dataSource.setPassword("postgres");
 
         return dataSource;
+    }
+
+    @Bean
+    public TransactionAdvice transactionAdvice() {
+        TransactionAdvice transactionAdvice = new TransactionAdvice();
+        transactionAdvice.setTransactionManager(transactionManager());
+        return transactionAdvice;
+    }
+
+    @Bean
+    public NameMatchMethodPointcut transactionPointcut() {
+        NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
+        pointcut.setMappedName("upgrade*");
+        return pointcut;
+    }
+
+    @Bean
+    public DefaultPointcutAdvisor transactionAdvisor() {
+        DefaultPointcutAdvisor advisor = new DefaultPointcutAdvisor();
+        advisor.setAdvice(transactionAdvice());
+        advisor.setPointcut(transactionPointcut());
+        return advisor;
     }
 }
