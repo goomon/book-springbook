@@ -20,10 +20,10 @@ public class TransactionAdvice implements MethodInterceptor {
         try {
             Object ret = invocation.proceed();
             transactionManager.commit(status);
+            return ret;
         } catch (RuntimeException e) {
             transactionManager.rollback(status);
             throw e;
         }
-        return null;
     }
 }
