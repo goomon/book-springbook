@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -145,6 +146,16 @@ class MemberServiceTest {
         } else {
             assertThat(memberUpdate.getLevel()).isEqualTo(member.getLevel());
         }
+    }
+
+    @Test
+    public void readOnlyTransactionAttribute() {
+        memberDao.deleteAll();
+        for (Member member : members) {
+            memberDao.add(member);
+        }
+
+        assertThatThrownBy(() -> testMemberService.getAll()).isInstanceOf(NonTransientDataAccessException.class);
     }
 
     private void checkMemberAndLevel(Member updated, String expectedId, Level expectedLevel) {

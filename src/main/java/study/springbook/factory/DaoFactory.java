@@ -62,8 +62,8 @@ public class DaoFactory {
         TransactionInterceptor transactionAdvice = new TransactionInterceptor();
         transactionAdvice.setTransactionManager(transactionManager());
         Properties props = new Properties();
-        props.setProperty("get*", "PROPAGATION_REQUIRED,readOnly");
-        props.setProperty("*", "PROPAGATION_REQUIRED,");
+        props.setProperty("get*", "PROPAGATION_REQUIRED, readOnly");
+        props.setProperty("*", "PROPAGATION_REQUIRED");
         transactionAdvice.setTransactionAttributes(props);
         return transactionAdvice;
     }
