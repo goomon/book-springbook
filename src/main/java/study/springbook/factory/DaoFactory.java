@@ -1,5 +1,6 @@
 package study.springbook.factory;
 
+import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.context.annotation.Bean;
@@ -62,10 +63,9 @@ public class DaoFactory {
     }
 
     @Bean
-    public NameMatchClassMethodPointcut transactionPointcut() {
-        NameMatchClassMethodPointcut pointcut = new NameMatchClassMethodPointcut();
-        pointcut.setMappedClassName("*ServiceImpl");
-        pointcut.setMappedName("upgrade*");
+    public AspectJExpressionPointcut transactionPointcut() {
+        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+        pointcut.setExpression("execution(* *..*ServiceImpl.upgrade*(..))");
         return pointcut;
     }
 
