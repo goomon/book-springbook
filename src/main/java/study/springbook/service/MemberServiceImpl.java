@@ -33,6 +33,21 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public List<Member> getAll() {
+        return memberDao.getAll();
+    }
+
+    @Override
+    public void deleteAll() {
+        memberDao.deleteAll();
+    }
+
+    @Override
+    public void update(Member member) {
+        memberDao.update(member);
+    }
+
+    @Override
     public void upgradeLevels() {
         List<Member> members = memberDao.getAll();
         for (Member member : members) {

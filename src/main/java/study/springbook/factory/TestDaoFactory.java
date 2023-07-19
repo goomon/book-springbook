@@ -9,12 +9,14 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.mail.MailSender;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.interceptor.TransactionInterceptor;
 import study.springbook.dao.JdbcContext;
 import study.springbook.dao.MemberDao;
 import study.springbook.dao.MemberDaoJdbc;
 import study.springbook.service.*;
 
 import javax.sql.DataSource;
+import java.util.Properties;
 
 @Configuration
 public class TestDaoFactory {
@@ -73,16 +75,20 @@ public class TestDaoFactory {
     }
 
     @Bean
-    public TransactionAdvice transactionAdvice() {
-        TransactionAdvice transactionAdvice = new TransactionAdvice();
+    public TransactionInterceptor transactionAdvice() {
+        TransactionInterceptor transactionAdvice = new TransactionInterceptor();
         transactionAdvice.setTransactionManager(transactionManager());
+        Properties props = new Properties();
+        props.setProperty("get*", "PROPAGATION_REQUIRED,readOnly");
+        props.setProperty("*", "PROPAGATION_REQUIRED");
+        transactionAdvice.setTransactionAttributes(props);
         return transactionAdvice;
     }
 
     @Bean
     public AspectJExpressionPointcut transactionPointcut() {
         AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        pointcut.setExpression("execution(* *..*ServiceImpl.upgrade*(..))");
+        pointcut.setExpression("bean(*Service)");
         return pointcut;
     }
 
