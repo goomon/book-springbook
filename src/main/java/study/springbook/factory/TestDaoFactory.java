@@ -1,14 +1,14 @@
 package study.springbook.factory;
 
-import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.mail.MailSender;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.AnnotationTransactionAttributeSource;
+import org.springframework.transaction.interceptor.TransactionAttributeSourceAdvisor;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 import study.springbook.dao.JdbcContext;
 import study.springbook.dao.MemberDao;
@@ -78,25 +78,14 @@ public class TestDaoFactory {
     public TransactionInterceptor transactionAdvice() {
         TransactionInterceptor transactionAdvice = new TransactionInterceptor();
         transactionAdvice.setTransactionManager(transactionManager());
-        Properties props = new Properties();
-        props.setProperty("get*", "PROPAGATION_REQUIRED,readOnly");
-        props.setProperty("*", "PROPAGATION_REQUIRED");
-        transactionAdvice.setTransactionAttributes(props);
+        transactionAdvice.setTransactionAttributeSource(new AnnotationTransactionAttributeSource());
         return transactionAdvice;
     }
 
     @Bean
-    public AspectJExpressionPointcut transactionPointcut() {
-        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        pointcut.setExpression("bean(*Service)");
-        return pointcut;
-    }
-
-    @Bean
-    public DefaultPointcutAdvisor transactionAdvisor() {
-        DefaultPointcutAdvisor advisor = new DefaultPointcutAdvisor();
-        advisor.setAdvice(transactionAdvice());
-        advisor.setPointcut(transactionPointcut());
+    public TransactionAttributeSourceAdvisor transactionAdvisor() {
+        TransactionAttributeSourceAdvisor advisor = new TransactionAttributeSourceAdvisor();
+        advisor.setTransactionInterceptor(transactionAdvice());
         return advisor;
     }
 
