@@ -33,6 +33,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public Member get(String id) {
+        return memberDao.get(id);
+    }
+
+    @Override
     public List<Member> getAll() {
         return memberDao.getAll();
     }

@@ -11,6 +11,9 @@ public interface MemberService {
     void add(Member member);
 
     @Transactional(readOnly = true)
+    Member get(String id);
+
+    @Transactional(readOnly = true)
     List<Member> getAll();
 
     void deleteAll();
