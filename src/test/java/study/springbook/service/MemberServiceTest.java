@@ -12,6 +12,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import study.springbook.dao.MemberDao;
 import study.springbook.domain.Level;
 import study.springbook.domain.Member;
@@ -36,6 +39,8 @@ class MemberServiceTest {
     private MemberService memberService;
     @Autowired
     private MemberService testMemberService;
+    @Autowired
+    private PlatformTransactionManager transactionManager;
     private List<Member> members;
 
     @BeforeEach
@@ -139,14 +144,6 @@ class MemberServiceTest {
         assertThat(testMemberService).isInstanceOf(Proxy.class);
     }
 
-    private void checkLevelUpgrade(Member member, boolean upgraded) {
-        Member memberUpdate = memberDao.get(member.getId());
-        if (upgraded) {
-            assertThat(memberUpdate.getLevel()).isEqualTo(member.getLevel().nextLevel());
-        } else {
-            assertThat(memberUpdate.getLevel()).isEqualTo(member.getLevel());
-        }
-    }
 
     @Test
     public void readOnlyTransactionAttribute() {
@@ -156,6 +153,34 @@ class MemberServiceTest {
         }
 
         assertThatThrownBy(() -> testMemberService.getAll()).isInstanceOf(NonTransientDataAccessException.class);
+    }
+
+    @Test
+    public void transactionSync() {
+        memberDao.deleteAll();
+        assertThat(memberDao.getCount()).isEqualTo(0);
+
+        DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
+        TransactionStatus status = transactionManager.getTransaction(txDefinition);
+
+        try {
+            memberService.add(members.get(0));
+            memberService.add(members.get(1));
+            assertThat(memberDao.getCount()).isEqualTo(2);
+        } finally {
+            transactionManager.rollback(status);
+        }
+
+        assertThat(memberDao.getCount()).isEqualTo(0);
+    }
+
+    private void checkLevelUpgrade(Member member, boolean upgraded) {
+        Member memberUpdate = memberDao.get(member.getId());
+        if (upgraded) {
+            assertThat(memberUpdate.getLevel()).isEqualTo(member.getLevel().nextLevel());
+        } else {
+            assertThat(memberUpdate.getLevel()).isEqualTo(member.getLevel());
+        }
     }
 
     private void checkMemberAndLevel(Member updated, String expectedId, Level expectedLevel) {
