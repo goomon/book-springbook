@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import study.springbook.domain.Level;
 import study.springbook.domain.Member;
 import study.springbook.exception.DuplicateMemberIdException;
+import study.springbook.service.SqlService;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 public class MemberDaoJdbc implements MemberDao {
 
     private JdbcTemplate jdbcTemplate;
+    private SqlService sqlService;
 
     private RowMapper<Member> memberMapper = (rs, rowNum) -> {
         Member member = new Member();
@@ -29,11 +31,21 @@ public class MemberDaoJdbc implements MemberDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    public void setSqlService(SqlService sqlService) {
+        this.sqlService = sqlService;
+    }
+
     @Override
     public void add(Member member) throws DuplicateMemberIdException {
         try {
-            jdbcTemplate.update("insert into member(id, name, password, level, login, recommend) values (?, ?, ?, ?, ?, ?)",
-                    member.getId(), member.getName(), member.getPassword(), member.getLevel().intValue(), member.getLogin(), member.getRecommend());
+            jdbcTemplate.update(
+                    sqlService.getSql("memberAdd"),
+                    member.getId(),
+                    member.getName(),
+                    member.getPassword(),
+                    member.getLevel().intValue(),
+                    member.getLogin(),
+                    member.getRecommend());
         } catch (DuplicateKeyException e) {
             throw new DuplicateMemberIdException(e);
         }
@@ -41,29 +53,34 @@ public class MemberDaoJdbc implements MemberDao {
 
     @Override
     public Member get(String id) {
-        return jdbcTemplate.queryForObject("select * from member where id = ?",
+        return jdbcTemplate.queryForObject(sqlService.getSql("memberGet"),
                 new Object[]{id}, memberMapper);
     }
 
     @Override
     public List<Member> getAll() {
-        return jdbcTemplate.query("select * from member order by id", memberMapper);
+        return jdbcTemplate.query(sqlService.getSql("memberGetAll"), memberMapper);
     }
 
     @Override
     public void deleteAll() {
-        jdbcTemplate.update("delete from member");
+        jdbcTemplate.update(sqlService.getSql("memberDeleteAll"));
     }
 
     @Override
     public int getCount() {
-        return jdbcTemplate.queryForObject("select count(*) from member", Integer.class);
+        return jdbcTemplate.queryForObject(sqlService.getSql("memberGetCount"), Integer.class);
     }
 
     @Override
     public void update(Member member) {
         jdbcTemplate.update(
-                "update member set name = ?, password = ?, level = ?, login = ?, recommend = ? where id = ?",
-                member.getName(), member.getPassword(), member.getLevel().intValue(), member.getLogin(), member.getRecommend(), member.getId());
+                sqlService.getSql("memberUpdate"),
+                member.getName(),
+                member.getPassword(),
+                member.getLevel().intValue(),
+                member.getLogin(),
+                member.getRecommend(),
+                member.getId());
     }
 }

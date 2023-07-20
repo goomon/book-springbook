@@ -15,6 +15,8 @@ import study.springbook.dao.MemberDaoJdbc;
 import study.springbook.service.*;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class DaoFactory {
@@ -27,8 +29,9 @@ public class DaoFactory {
     }
 
     @Bean
-    public MemberDao memberDao() {
-        MemberDao memberDao = new MemberDaoJdbc(dataSource());
+    public MemberDaoJdbc memberDao() {
+        MemberDaoJdbc memberDao = new MemberDaoJdbc(dataSource());
+        memberDao.setSqlService(sqlService());
         return memberDao;
     }
 
@@ -74,5 +77,22 @@ public class DaoFactory {
     @Bean
     public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
         return new DefaultAdvisorAutoProxyCreator();
+    }
+
+    @Bean
+    public SimpleSqlService sqlService() {
+        SimpleSqlService sqlService = new SimpleSqlService();
+
+        Map<String, String> map = new HashMap<>();
+        map.put("memberAdd", "insert into member(id, name, password, level, login, recommend) values (?, ?, ?, ?, ?, ?)");
+        map.put("memberGet", "select * from member where id = ?");
+        map.put("memberGetAll", "select * from member order by id");
+        map.put("memberDeleteAll", "delete from member");
+        map.put("memberGetCount", "select count(*) from member");
+        map.put("memberUpdate", "update member set name = ?, password = ?, level = ?, login = ?, recommend = ? where id = ?");
+
+        sqlService.setSqlMap(map);
+
+        return sqlService;
     }
 }

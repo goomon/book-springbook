@@ -178,6 +178,9 @@ class MemberServiceTest {
     @Test
     @Transactional
     public void rollbackTest() {
+        memberDao.deleteAll();
+        assertThat(memberDao.getCount()).isEqualTo(0);
+
         for (Member member : members) {
             memberService.add(member);
         }
