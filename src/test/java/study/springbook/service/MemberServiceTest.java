@@ -14,6 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import study.springbook.dao.MemberDao;
 import study.springbook.domain.Level;
@@ -172,6 +173,14 @@ class MemberServiceTest {
         }
 
         assertThat(memberDao.getCount()).isEqualTo(0);
+    }
+
+    @Test
+    @Transactional
+    public void rollbackTest() {
+        for (Member member : members) {
+            memberService.add(member);
+        }
     }
 
     private void checkLevelUpgrade(Member member, boolean upgraded) {

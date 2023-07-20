@@ -8,9 +8,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.annotation.Transactional;
 import study.springbook.domain.Level;
 import study.springbook.domain.Member;
 import study.springbook.exception.DuplicateMemberIdException;
@@ -27,8 +25,6 @@ class MemberDaoTest {
 
     @Autowired
     private MemberDao dao;
-    @Autowired
-    private PlatformTransactionManager transactionManager;
     private Member member1;
     private Member member2;
     private Member member3;
@@ -128,20 +124,9 @@ class MemberDaoTest {
     }
 
     @Test
+    @Transactional(readOnly = true)
     public void transactionSync() {
-        dao.deleteAll();
-        assertThat(dao.getCount()).isEqualTo(0);
-
-        dao.add(member1);
-        assertThat(dao.getCount()).isEqualTo(1);
-
-        DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
-        txDefinition.setReadOnly(true);
-        TransactionStatus status = transactionManager.getTransaction(txDefinition);
-
         assertThatThrownBy(() -> dao.deleteAll()).isInstanceOf(NonTransientDataAccessException.class);
-
-        transactionManager.commit(status);
     }
 
     private void checkSameMember(Member member1, Member member2) {
