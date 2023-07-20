@@ -10,9 +10,9 @@ import org.springframework.transaction.annotation.AnnotationTransactionAttribute
 import org.springframework.transaction.interceptor.TransactionAttributeSourceAdvisor;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 import study.springbook.dao.JdbcContext;
-import study.springbook.dao.MemberDao;
 import study.springbook.dao.MemberDaoJdbc;
 import study.springbook.service.*;
+import study.springbook.sqlservice.SimpleSqlService;
 
 import javax.sql.DataSource;
 import java.util.HashMap;

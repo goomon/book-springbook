@@ -1,4 +1,4 @@
-package study.springbook.service;
+package study.springbook.sqlservice;
 
 import study.springbook.exception.SqlRetrievalFailureException;
 

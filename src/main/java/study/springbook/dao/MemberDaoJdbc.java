@@ -6,7 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import study.springbook.domain.Level;
 import study.springbook.domain.Member;
 import study.springbook.exception.DuplicateMemberIdException;
-import study.springbook.service.SqlService;
+import study.springbook.sqlservice.SqlService;
 
 import javax.sql.DataSource;
 import java.util.List;
