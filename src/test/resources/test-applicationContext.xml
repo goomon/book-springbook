@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/aop  http://www.springframework.org/schema/aop/spring-aop.xsd
+                        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+        <property name="driverClass" value="org.postgresql.Driver"/>
+        <property name="url" value="jdbc:postgresql://localhost:5432/test_db"/>
+        <property name="username" value="postgres"/>
+        <property name="password" value="postgres"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!--    application components-->
+    <bean id="sqlService" class="study.springbook.sqlservice.SimpleSqlService">
+        <property name="sqlMap">
+            <map>
+                <entry key="memberAdd" value="insert into member(id, name, password, level, login, recommend) values (?, ?, ?, ?, ?, ?)" />
+                <entry key="memberGet" value="select * from member where id = ?"/>
+                <entry key="memberGetAll" value="select * from member order by id"/>
+                <entry key="memberDeleteAll" value="delete from member"/>
+                <entry key="memberGetCount" value="select count(*) from member"/>
+                <entry key="memberUpdate" value="update member set name = ?, password = ?, level = ?, login = ?, recommend = ? where id = ?"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="memberDao" class="study.springbook.dao.MemberDaoJdbc">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="sqlService" ref="sqlService"/>
+    </bean>
+
+    <bean id="mailSender" class="study.springbook.service.DummyMailSender">
+    </bean>
+
+    <bean id="memberService" class="study.springbook.service.MemberServiceImpl">
+        <property name="memberDao" ref="memberDao"/>
+        <property name="mailSender" ref="mailSender"/>
+    </bean>
+
+    <bean id="testMemberService" class="study.springbook.service.TestMemberServiceImpl">
+        <property name="memberDao" ref="memberDao"/>
+        <property name="mailSender" ref="mailSender"/>
+    </bean>
+
+    <!--    aop-->
+    <tx:annotation-driven/>
+
+    <!--
+    <aop:config>
+        <aop:advisor advice-ref="transactionAdvice" pointcut="bean(*Service)"/>
+    </aop:config>
+
+    <tx:advice id="transactionAdvice">
+        <tx:attributes>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+    -->
+
+    <!--    aop configuration with beans-->
+    <!--
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
+    <bean id="transactionPointcut" class="org.springframework.aop.aspectj.AspectJExpressionPointcut">
+        <property name="expression" value="bean(*Service)"/>
+    </bean>
+
+    <bean id="transactionAttributeSource"
+          class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"/>
+
+    <bean id="transactionAdvice" class="org.springframework.transaction.interceptor.TransactionInterceptor">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="transactionAttributeSource" ref="transactionAttributeSource"/>
+    </bean>
+
+    <bean id="transactionAdvisor" class="org.springframework.transaction.interceptor.TransactionAttributeSourceAdvisor">
+        <property name="transactionInterceptor" ref="transactionAdvice"/>
+    </bean>
+    -->
+</beans>

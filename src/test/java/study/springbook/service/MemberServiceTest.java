@@ -11,7 +11,6 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +19,6 @@ import study.springbook.dao.MemberDao;
 import study.springbook.domain.Level;
 import study.springbook.domain.Member;
 import study.springbook.exception.TestMemberServiceException;
-import study.springbook.factory.TestDaoFactory;
 
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -32,7 +30,7 @@ import static org.mockito.Mockito.*;
 import static study.springbook.service.MemberServiceImpl.*;
 
 @SpringBootTest
-@ContextConfiguration(classes = TestDaoFactory.class, loader = AnnotationConfigContextLoader.class)
+@ContextConfiguration(locations = "/test-applicationContext.xml")
 class MemberServiceTest {
 
     @Autowired

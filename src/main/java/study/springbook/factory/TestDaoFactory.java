@@ -19,7 +19,7 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
-@Configuration
+//@Configuration
 public class TestDaoFactory {
 
     @Bean
@@ -40,7 +40,8 @@ public class TestDaoFactory {
 
     @Bean
     public MemberDaoJdbc memberDao() {
-        MemberDaoJdbc memberDao = new MemberDaoJdbc(dataSource());
+        MemberDaoJdbc memberDao = new MemberDaoJdbc();
+        memberDao.setDataSource(dataSource());
         memberDao.setSqlService(sqlService());
         return memberDao;
     }

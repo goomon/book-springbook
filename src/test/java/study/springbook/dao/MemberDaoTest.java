@@ -7,12 +7,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 import study.springbook.domain.Level;
 import study.springbook.domain.Member;
 import study.springbook.exception.DuplicateMemberIdException;
-import study.springbook.factory.TestDaoFactory;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -20,7 +18,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
-@ContextConfiguration(classes = TestDaoFactory.class, loader = AnnotationConfigContextLoader.class)
+@ContextConfiguration(locations = "/test-applicationContext.xml")
 class MemberDaoTest {
 
     @Autowired

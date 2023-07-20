@@ -27,7 +27,7 @@ public class MemberDaoJdbc implements MemberDao {
         return member;
     };
 
-    public MemberDaoJdbc(DataSource dataSource) {
+    public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
