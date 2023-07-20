@@ -1,4 +1,4 @@
-package study.springbook.service;
+package study.springbook.exception;
 
 public class TestMemberServiceException extends RuntimeException {
 }

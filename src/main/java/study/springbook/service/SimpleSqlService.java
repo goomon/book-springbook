@@ -1,5 +1,7 @@
 package study.springbook.service;
 
+import study.springbook.exception.SqlRetrievalFailureException;
+
 import java.util.Map;
 
 public class SimpleSqlService implements SqlService {

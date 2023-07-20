@@ -1,6 +1,7 @@
 package study.springbook.service;
 
 import study.springbook.domain.Member;
+import study.springbook.exception.TestMemberServiceException;
 
 import java.util.List;
 

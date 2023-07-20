@@ -19,6 +19,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import study.springbook.dao.MemberDao;
 import study.springbook.domain.Level;
 import study.springbook.domain.Member;
+import study.springbook.exception.TestMemberServiceException;
 import study.springbook.factory.TestDaoFactory;
 
 import java.lang.reflect.Proxy;
