@@ -9,6 +9,14 @@ public class BaseSqlService implements SqlService {
     protected SqlReader sqlReader;
     protected SqlRegistry sqlRegistry;
 
+    public SqlReader getSqlReader() {
+        return sqlReader;
+    }
+
+    public SqlRegistry getSqlRegistry() {
+        return sqlRegistry;
+    }
+
     public void setSqlReader(SqlReader sqlReader) {
         this.sqlReader = sqlReader;
     }
@@ -18,7 +26,7 @@ public class BaseSqlService implements SqlService {
     }
 
     @PostConstruct
-    private void loadSql() {
+    public void loadSql() {
         sqlReader.read(sqlRegistry);
     }
 
