@@ -19,17 +19,7 @@
     </bean>
 
     <!--    application components-->
-    <bean id="sqlService" class="study.springbook.sqlservice.SimpleSqlService">
-        <property name="sqlMap">
-            <map>
-                <entry key="memberAdd" value="insert into member(id, name, password, level, login, recommend) values (?, ?, ?, ?, ?, ?)" />
-                <entry key="memberGet" value="select * from member where id = ?"/>
-                <entry key="memberGetAll" value="select * from member order by id"/>
-                <entry key="memberDeleteAll" value="delete from member"/>
-                <entry key="memberGetCount" value="select count(*) from member"/>
-                <entry key="memberUpdate" value="update member set name = ?, password = ?, level = ?, login = ?, recommend = ? where id = ?"/>
-            </map>
-        </property>
+    <bean id="sqlService" class="study.springbook.sqlservice.XmlSqlService">
     </bean>
 
     <bean id="memberDao" class="study.springbook.dao.MemberDaoJdbc">
