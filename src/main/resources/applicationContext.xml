@@ -21,10 +21,16 @@
     </bean>
 
     <!--    application components-->
-    <bean id="sqlService" class="study.springbook.sqlservice.XmlSqlService">
-        <property name="sqlReader" ref="sqlService"/>
-        <property name="sqlRegistry" ref="sqlService"/>
+    <bean id="sqlReader" class="study.springbook.sqlservice.JaxXmlSqlReader">
         <property name="sqlmapFile" value="/sql/sqlmap.xml"/>
+    </bean>
+
+    <bean id="sqlRegistry" class="study.springbook.sqlservice.HashMapSqlRegistry">
+    </bean>
+
+    <bean id="sqlService" class="study.springbook.sqlservice.BaseSqlService">
+        <property name="sqlReader" ref="sqlReader"/>
+        <property name="sqlRegistry" ref="sqlRegistry"/>
     </bean>
 
     <bean id="memberDao" class="study.springbook.dao.MemberDaoJdbc">
