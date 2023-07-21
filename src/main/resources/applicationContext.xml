@@ -27,6 +27,7 @@
 
     <bean id="sqlService" class="study.springbook.sqlservice.OxmSqlService">
         <property name="unmarshaller" ref="unmarshaller"/>
+        <property name="sqlmap" value="classpath:sql/testpath/sqlmap.xml"/>
     </bean>
 
     <!--

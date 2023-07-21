@@ -1,6 +1,8 @@
 package study.springbook.sqlservice;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.oxm.Unmarshaller;
 import study.springbook.exception.SqlRetrievalFailureException;
 import study.springbook.sqlservice.jaxb.SqlType;
@@ -20,8 +22,8 @@ public class OxmSqlService implements SqlService {
         oxmSqlReader.setUnmarshaller(unmarshaller);
     }
 
-    public void setSqlmapFile(String sqlmapFile) {
-        oxmSqlReader.setSqlmapFile(sqlmapFile);
+    public void setSqlmap(Resource sqlmap) {
+        oxmSqlReader.setSqlmap(sqlmap);
     }
 
     @PostConstruct
@@ -40,27 +42,27 @@ public class OxmSqlService implements SqlService {
     private class OxmSqlReader implements SqlReader {
 
         private Unmarshaller unmarshaller;
-        private String sqlmapFile;
+        private Resource sqlmap = new ClassPathResource("sql/sqlmap.xml");
 
         public void setUnmarshaller(Unmarshaller unmarshaller) {
             this.unmarshaller = unmarshaller;
         }
 
-        public void setSqlmapFile(String sqlmapFile) {
-            this.sqlmapFile = sqlmapFile;
+        public void setSqlmap(Resource sqlmap) {
+            this.sqlmap = sqlmap;
         }
 
         @Override
         public void read(SqlRegistry sqlRegistry) {
             try {
-                StreamSource source = new StreamSource(getClass().getResourceAsStream(sqlmapFile));
+                StreamSource source = new StreamSource(sqlmap.getInputStream());
                 Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(source);
 
                 for (SqlType sql : sqlmap.getSql()) {
                     sqlRegistry.registerSql(sql.getKey(), sql.getValue());
                 }
             } catch (IOException e) {
-                throw new IllegalArgumentException("Cannot load " + sqlmapFile, e);
+                throw new IllegalArgumentException("Cannot load " + sqlmap.getFilename(), e);
             }
         }
     }
