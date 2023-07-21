@@ -1,9 +1,9 @@
 package study.springbook.sqlservice;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
-import study.springbook.dao.MemberDao;
 import study.springbook.exception.SqlRetrievalFailureException;
 import study.springbook.sqlservice.jaxb.SqlType;
 import study.springbook.sqlservice.jaxb.Sqlmap;
@@ -14,14 +14,20 @@ import java.util.Map;
 
 public class XmlSqlService implements SqlService {
 
+    private String sqlmapFile;
     private Map<String, String> sqlMap = new HashMap<>();
 
-    public XmlSqlService() {
+    public void setSqlmapFile(String sqlmapFile) {
+        this.sqlmapFile = sqlmapFile;
+    }
+
+    @PostConstruct
+    private void loadSql() {
         String contextPath = Sqlmap.class.getPackage().getName();
         try {
             JAXBContext context = JAXBContext.newInstance(contextPath);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            InputStream is = MemberDao.class.getResourceAsStream("/sql/sqlmap.xml");
+            InputStream is = getClass().getResourceAsStream(sqlmapFile);
             Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(is);
 
             for (SqlType sql : sqlmap.getSql()) {
