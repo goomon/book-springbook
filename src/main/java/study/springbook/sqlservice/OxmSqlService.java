@@ -2,7 +2,6 @@ package study.springbook.sqlservice;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.oxm.Unmarshaller;
-import study.springbook.exception.SqlNotFoundException;
 import study.springbook.exception.SqlRetrievalFailureException;
 import study.springbook.sqlservice.jaxb.SqlType;
 import study.springbook.sqlservice.jaxb.Sqlmap;
