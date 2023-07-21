@@ -22,6 +22,8 @@
 
     <!--    application components-->
     <bean id="sqlService" class="study.springbook.sqlservice.XmlSqlService">
+        <property name="sqlReader" ref="sqlService"/>
+        <property name="sqlRegistry" ref="sqlService"/>
         <property name="sqlmapFile" value="/sql/sqlmap.xml"/>
     </bean>
 
