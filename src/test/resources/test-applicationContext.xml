@@ -21,9 +21,18 @@
     </bean>
 
     <!--    application components-->
-    <bean id="sqlService" class="study.springbook.sqlservice.DefaultSqlService"/>
+    <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="contextPath" value="study.springbook.sqlservice.jaxb"/>
+    </bean>
+
+    <bean id="sqlService" class="study.springbook.sqlservice.OxmSqlService">
+        <property name="unmarshaller" ref="unmarshaller"/>
+        <property name="sqlmapFile" value="/sql/sqlmap.xml"/>
+    </bean>
 
     <!--
+    <bean id="sqlService" class="study.springbook.sqlservice.DefaultSqlService"/>
+
     <bean id="sqlReader" class="study.springbook.sqlservice.JaxbXmlSqlReader">
         <property name="sqlmapFile" value="/sql/sqlmap.xml"/>
     </bean>
