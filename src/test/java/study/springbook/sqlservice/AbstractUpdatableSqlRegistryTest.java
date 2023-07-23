@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 public abstract class AbstractUpdatableSqlRegistryTest {
 
-    private UpdatableSqlRegistry sqlRegistry;
+    UpdatableSqlRegistry sqlRegistry;
 
     @BeforeEach
     public void setUp() {
@@ -56,7 +56,7 @@ public abstract class AbstractUpdatableSqlRegistryTest {
         assertThatThrownBy(() -> sqlRegistry.updateSql("unknown", "modified"));
     }
 
-    private void checkFindResult(String expected1, String expected2, String expected3) {
+    protected void checkFindResult(String expected1, String expected2, String expected3) {
         assertThat(sqlRegistry.findSql("key1")).isEqualTo(expected1);
         assertThat(sqlRegistry.findSql("key2")).isEqualTo(expected2);
         assertThat(sqlRegistry.findSql("key3")).isEqualTo(expected3);

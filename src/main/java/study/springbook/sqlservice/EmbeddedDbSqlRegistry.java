@@ -2,6 +2,11 @@ package study.springbook.sqlservice;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import study.springbook.exception.SqlNotFoundException;
 import study.springbook.exception.SqlUpdateFailureException;
 
@@ -11,9 +16,11 @@ import java.util.Map;
 public class EmbeddedDbSqlRegistry implements UpdatableSqlRegistry {
 
     private JdbcTemplate jdbcTemplate;
+    private TransactionTemplate transactionTemplate;
 
     public void setDatasource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
+        transactionTemplate = new TransactionTemplate(new DataSourceTransactionManager(dataSource));
     }
 
     @Override
@@ -40,8 +47,13 @@ public class EmbeddedDbSqlRegistry implements UpdatableSqlRegistry {
 
     @Override
     public void updateSql(Map<String, String> sqlmap) throws SqlUpdateFailureException {
-        for (Map.Entry<String, String> entry : sqlmap.entrySet()) {
-            updateSql(entry.getKey(), entry.getValue());
-        }
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                for (Map.Entry<String, String> entry : sqlmap.entrySet()) {
+                    updateSql(entry.getKey(), entry.getValue());
+                }
+            }
+        });
     }
 }
