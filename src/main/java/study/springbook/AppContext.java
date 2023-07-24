@@ -2,6 +2,8 @@ package study.springbook;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.mail.MailSender;
@@ -11,7 +13,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import study.springbook.service.DummyMailSender;
 import study.springbook.service.MemberService;
 import study.springbook.service.TestMemberServiceImpl;
-import study.springbook.sqlservice.MemberSqlMapConfig;
 import study.springbook.sqlservice.SqlMapConfig;
 
 import javax.sql.DataSource;
@@ -20,9 +21,9 @@ import java.sql.Driver;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages = {"study.springbook.dao", "study.springbook.service", "study.springbook.sqlservice"})
-@Import(SqlServiceContext.class)
+@EnableSqlService
 @PropertySource("/database.properties")
-public class AppContext {
+public class AppContext implements SqlMapConfig {
 
     @Value("${db.driverClass}")
     Class<? extends Driver> driverClass;
@@ -32,11 +33,6 @@ public class AppContext {
     String username;
     @Value("${db.password}")
     String password;
-
-    @Bean
-    public SqlMapConfig sqlMapConfig() {
-        return new MemberSqlMapConfig();
-    }
 
     @Bean
     public DataSource dataSource() {
@@ -55,6 +51,11 @@ public class AppContext {
         DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
         transactionManager.setDataSource(dataSource());
         return transactionManager;
+    }
+
+    @Override
+    public Resource getSqlMapResource() {
+        return new ClassPathResource("/sql/sqlmap.xml");
     }
 
     @Configuration
