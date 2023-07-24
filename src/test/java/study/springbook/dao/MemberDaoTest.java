@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.NonTransientDataAccessException;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import study.springbook.AppContext;
-import study.springbook.TestAppContext;
 import study.springbook.domain.Level;
 import study.springbook.domain.Member;
 import study.springbook.exception.DuplicateMemberIdException;
@@ -20,7 +20,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
-@ContextConfiguration(classes = {AppContext.class, TestAppContext.class})
+@ContextConfiguration(classes = AppContext.class)
+@ActiveProfiles("test")
 class MemberDaoTest {
 
     @Autowired
