@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import study.springbook.service.DummyMailSender;
 import study.springbook.service.MemberService;
 import study.springbook.service.TestMemberServiceImpl;
+import study.springbook.sqlservice.MemberSqlMapConfig;
+import study.springbook.sqlservice.SqlMapConfig;
 
 import javax.sql.DataSource;
 import java.sql.Driver;
@@ -30,6 +32,11 @@ public class AppContext {
     String username;
     @Value("${db.password}")
     String password;
+
+    @Bean
+    public SqlMapConfig sqlMapConfig() {
+        return new MemberSqlMapConfig();
+    }
 
     @Bean
     public DataSource dataSource() {
