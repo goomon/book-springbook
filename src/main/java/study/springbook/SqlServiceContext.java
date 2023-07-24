@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import study.springbook.sqlservice.EmbeddedDbSqlRegistry;
+import study.springbook.sqlservice.updatable.EmbeddedDbSqlRegistry;
 import study.springbook.sqlservice.OxmSqlService;
 import study.springbook.sqlservice.SqlRegistry;
 import study.springbook.sqlservice.SqlService;

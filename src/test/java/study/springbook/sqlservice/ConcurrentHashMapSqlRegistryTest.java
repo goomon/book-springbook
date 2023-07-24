@@ -1,5 +1,8 @@
 package study.springbook.sqlservice;
 
+import study.springbook.sqlservice.updatable.ConcurrentHashMapSqlRegistry;
+import study.springbook.sqlservice.updatable.UpdatableSqlRegistry;
+
 public class ConcurrentHashMapSqlRegistryTest extends AbstractUpdatableSqlRegistryTest {
 
     @Override

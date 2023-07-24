@@ -3,6 +3,7 @@ package study.springbook.sqlservice;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import study.springbook.exception.SqlUpdateFailureException;
+import study.springbook.sqlservice.updatable.UpdatableSqlRegistry;
 
 import java.util.HashMap;
 import java.util.Map;

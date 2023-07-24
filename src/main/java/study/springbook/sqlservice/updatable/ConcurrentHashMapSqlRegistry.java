@@ -1,7 +1,8 @@
-package study.springbook.sqlservice;
+package study.springbook.sqlservice.updatable;
 
 import study.springbook.exception.SqlNotFoundException;
 import study.springbook.exception.SqlUpdateFailureException;
+import study.springbook.sqlservice.updatable.UpdatableSqlRegistry;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

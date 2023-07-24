@@ -1,14 +1,14 @@
-package study.springbook.sqlservice;
+package study.springbook.sqlservice.updatable;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import study.springbook.exception.SqlNotFoundException;
 import study.springbook.exception.SqlUpdateFailureException;
+import study.springbook.sqlservice.updatable.UpdatableSqlRegistry;
 
 import javax.sql.DataSource;
 import java.util.Map;

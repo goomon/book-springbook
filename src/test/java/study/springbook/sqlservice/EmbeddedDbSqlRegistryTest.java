@@ -7,6 +7,8 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.test.context.ContextConfiguration;
 import study.springbook.AppContext;
 import study.springbook.exception.SqlUpdateFailureException;
+import study.springbook.sqlservice.updatable.EmbeddedDbSqlRegistry;
+import study.springbook.sqlservice.updatable.UpdatableSqlRegistry;
 
 import java.util.HashMap;
 import java.util.Map;

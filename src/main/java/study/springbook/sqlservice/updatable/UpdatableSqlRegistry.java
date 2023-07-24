@@ -1,6 +1,7 @@
-package study.springbook.sqlservice;
+package study.springbook.sqlservice.updatable;
 
 import study.springbook.exception.SqlUpdateFailureException;
+import study.springbook.sqlservice.SqlRegistry;
 
 import java.util.Map;
 
