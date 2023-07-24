@@ -3,6 +3,7 @@ package study.springbook.dao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.NonTransientDataAccessException;
@@ -35,6 +36,16 @@ class MemberDaoTest {
         member1 = new Member("id1", "name1", "password1", Level.BASIC, 1, 0);
         member2 = new Member("id2", "name2", "password2", Level.SILVER, 55, 10);
         member3 = new Member("id3", "name3", "password3", Level.GOLD, 100, 40);
+    }
+
+    @Autowired
+    private DefaultListableBeanFactory beanFactory;
+
+    @Test
+    public void beans() {
+        for (String n : beanFactory.getBeanDefinitionNames()) {
+            System.out.println(n + "\t" + beanFactory.getBean(n).getClass().getName());
+        }
     }
 
     @Test
