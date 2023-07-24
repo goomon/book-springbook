@@ -15,7 +15,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import study.springbook.TestApplicationContext;
+import study.springbook.AppContext;
+import study.springbook.TestAppContext;
 import study.springbook.dao.MemberDao;
 import study.springbook.domain.Level;
 import study.springbook.domain.Member;
@@ -31,7 +32,7 @@ import static org.mockito.Mockito.*;
 import static study.springbook.service.MemberServiceImpl.*;
 
 @SpringBootTest
-@ContextConfiguration(classes = TestApplicationContext.class)
+@ContextConfiguration(classes = {AppContext.class, TestAppContext.class})
 class MemberServiceTest {
 
     @Autowired
@@ -144,7 +145,6 @@ class MemberServiceTest {
     public void advisorAutoProxyCreator() {
         assertThat(testMemberService).isInstanceOf(Proxy.class);
     }
-
 
     @Test
     public void readOnlyTransactionAttribute() {

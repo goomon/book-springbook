@@ -8,7 +8,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-import study.springbook.TestApplicationContext;
+import study.springbook.AppContext;
+import study.springbook.TestAppContext;
 import study.springbook.domain.Level;
 import study.springbook.domain.Member;
 import study.springbook.exception.DuplicateMemberIdException;
@@ -19,7 +20,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
-@ContextConfiguration(classes = TestApplicationContext.class)
+@ContextConfiguration(classes = {AppContext.class, TestAppContext.class})
 class MemberDaoTest {
 
     @Autowired
@@ -32,7 +33,7 @@ class MemberDaoTest {
     public void setUp() {
         member1 = new Member("id1", "name1", "password1", Level.BASIC, 1, 0);
         member2 = new Member("id2", "name2", "password2", Level.SILVER, 55, 10);
-        member3 = new Member("id3", "name3", "password3", Level.GOLD, 100,40);
+        member3 = new Member("id3", "name3", "password3", Level.GOLD, 100, 40);
     }
 
     @Test

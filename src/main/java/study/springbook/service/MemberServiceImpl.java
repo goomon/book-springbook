@@ -1,13 +1,16 @@
 package study.springbook.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Service;
 import study.springbook.dao.MemberDao;
 import study.springbook.domain.Level;
 import study.springbook.domain.Member;
 
 import java.util.List;
 
+@Service("memberService")
 public class MemberServiceImpl implements MemberService {
 
     private MemberDao memberDao;
@@ -16,10 +19,12 @@ public class MemberServiceImpl implements MemberService {
     public static final int MIN_LOGIN_FOR_SILVER = 30;
     public static final int MIN_RECOMMEND_FOR_GOLD = 50;
 
+    @Autowired
     public void setMemberDao(MemberDao memberDao) {
         this.memberDao = memberDao;
     }
 
+    @Autowired
     public void setMailSender(MailSender mailSender) {
         this.mailSender = mailSender;
     }

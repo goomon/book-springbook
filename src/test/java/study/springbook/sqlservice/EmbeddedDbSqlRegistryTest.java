@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.test.context.ContextConfiguration;
-import study.springbook.TestApplicationContext;
+import study.springbook.AppContext;
 import study.springbook.exception.SqlUpdateFailureException;
 
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.*;
 
-@ContextConfiguration(classes = TestApplicationContext.class)
+@ContextConfiguration(classes = AppContext.class)
 public class EmbeddedDbSqlRegistryTest extends AbstractUpdatableSqlRegistryTest {
 
     private EmbeddedDatabase embeddedDatabase;

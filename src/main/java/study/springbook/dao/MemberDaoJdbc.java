@@ -1,8 +1,10 @@
 package study.springbook.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 import study.springbook.domain.Level;
 import study.springbook.domain.Member;
 import study.springbook.exception.DuplicateMemberIdException;
@@ -11,6 +13,7 @@ import study.springbook.sqlservice.SqlService;
 import javax.sql.DataSource;
 import java.util.List;
 
+@Repository("memberDao")
 public class MemberDaoJdbc implements MemberDao {
 
     private JdbcTemplate jdbcTemplate;
@@ -27,10 +30,12 @@ public class MemberDaoJdbc implements MemberDao {
         return member;
     };
 
+    @Autowired
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    @Autowired
     public void setSqlService(SqlService sqlService) {
         this.sqlService = sqlService;
     }
