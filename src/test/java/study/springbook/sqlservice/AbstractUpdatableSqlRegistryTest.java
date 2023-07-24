@@ -2,7 +2,6 @@ package study.springbook.sqlservice;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import study.springbook.exception.SqlUpdateFailureException;
 
 import java.util.HashMap;
@@ -10,7 +9,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
 
-@SpringBootTest
 public abstract class AbstractUpdatableSqlRegistryTest {
 
     UpdatableSqlRegistry sqlRegistry;

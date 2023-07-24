@@ -15,6 +15,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import study.springbook.TestApplicationContext;
 import study.springbook.dao.MemberDao;
 import study.springbook.domain.Level;
 import study.springbook.domain.Member;
@@ -30,7 +31,7 @@ import static org.mockito.Mockito.*;
 import static study.springbook.service.MemberServiceImpl.*;
 
 @SpringBootTest
-@ContextConfiguration(locations = "/test-applicationContext.xml")
+@ContextConfiguration(classes = TestApplicationContext.class)
 class MemberServiceTest {
 
     @Autowired
